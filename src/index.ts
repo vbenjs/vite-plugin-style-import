@@ -101,7 +101,6 @@ export default (options: VitePluginComponentImport): Plugin => {
       }
 
       const babelResult = await transformAsync(code, {
-        ast: true,
         plugins,
         sourceFileName: id,
         sourceMaps: needSourceMap,
