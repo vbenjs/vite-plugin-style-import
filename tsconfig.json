@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
-    "target": "esnext",
+    "target": "es2016",
     "moduleResolution": "node",
     "strict": true,
     "declaration": true,
     "noUnusedLocals": true,
     "esModuleInterop": true,
     "outDir": "dist",
-    "module": "commonjs",
+    "module": "esnext",
     "lib": ["ESNext"],
     "sourceMap": false,
     "noEmitOnError": true
