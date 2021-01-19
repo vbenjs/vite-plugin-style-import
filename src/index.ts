@@ -107,8 +107,8 @@ export default (options: VitePluginComponentImport): Plugin => {
       });
 
       return {
-        code: (babelResult && babelResult.code) || code,
-        map: (babelResult && babelResult.map) || null,
+        code: babelResult?.code ?? code,
+        map: babelResult?.map ?? null,
       };
     },
   };

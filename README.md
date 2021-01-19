@@ -27,7 +27,7 @@ import { Button } from 'ant-design-vue';
         ↓ ↓ ↓ ↓ ↓ ↓
 
 import { Button } from 'ant-design-vue';
-import 'ant-design-vue/lib/button/style/index.css';
+import 'ant-design-vue/es/button/style/css.js';
 
 ```
 
