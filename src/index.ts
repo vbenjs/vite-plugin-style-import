@@ -44,9 +44,13 @@ function createBabelStyleImportPlugin({ types }: Record<string, any>): PluginObj
 
         const { libraryName, resolveStyle, esModule, libraryNameChangeCase = 'paramCase' } = lib;
 
-        if (!resolveStyle || typeof resolveStyle !== 'function') return;
-
-        if (!libraryName || value !== libraryName) return;
+        if (
+          !resolveStyle ||
+          typeof resolveStyle !== 'function' ||
+          !libraryName ||
+          value !== libraryName
+        )
+          return;
 
         for (const specifier of node.specifiers) {
           if (types.isImportSpecifier(specifier)) {
