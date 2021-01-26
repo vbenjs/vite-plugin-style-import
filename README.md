@@ -27,7 +27,7 @@ import { Button } from 'ant-design-vue';
         ↓ ↓ ↓ ↓ ↓ ↓
 
 import { Button } from 'ant-design-vue';
-import 'ant-design-vue/es/button/style/css.js';
+import 'ant-design-vue/es/button/style/index.js';
 
 ```
 
@@ -59,7 +59,7 @@ export default (): UserConfigExport => {
             libraryName: 'ant-design-vue',
             esModule: true,
             resolveStyle: (name) => {
-              return `ant-design-vue/es/${name}/style/css`;
+              return `ant-design-vue/es/${name}/style/index`;
             },
           },
           {
