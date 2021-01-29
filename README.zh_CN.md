@@ -52,6 +52,15 @@ import styleImport from 'vite-plugin-style-import';
 
 export default (): UserConfigExport => {
   return {
+    // 1. 如果使用的是ant-design 系列的 需要配置这个
+    // 2. 确保less安装在依赖 `yarn add less -D`
+    css: {
+      preprocessorOptions: {
+        less: {
+          javascriptEnabled: true,
+        },
+      },
+    },
     plugins: [
       styleImport({
         libs: [
@@ -60,6 +69,13 @@ export default (): UserConfigExport => {
             esModule: true,
             resolveStyle: (name) => {
               return `ant-design-vue/es/${name}/style/index`;
+            },
+          },
+          {
+            libraryName: 'antd',
+            esModule: true,
+            resolveStyle: (name) => {
+              return `antd/es/${name}/style/index`;
             },
           },
           {
