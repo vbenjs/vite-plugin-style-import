@@ -5,6 +5,13 @@ import styleImport from '../src';
 
 export default (): UserConfigExport => {
   return {
+    css: {
+      preprocessorOptions: {
+        less: {
+          javascriptEnabled: true,
+        },
+      },
+    },
     plugins: [
       vue(),
       jsx(),

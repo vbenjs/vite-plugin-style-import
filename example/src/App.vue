@@ -22,9 +22,12 @@
 
   import TestTsx from './Test';
   import TestJsx from './Test1';
+  import { ElAlert } from 'element-plus';
+  import { Affix, Cascader } from 'ant-design-vue';
+
   export default defineComponent({
     name: 'App',
-    components: { TestTsx, TestJsx },
+    components: { TestTsx, TestJsx, ElAlert, Affix, Cascader },
     setup() {
       return {};
     },

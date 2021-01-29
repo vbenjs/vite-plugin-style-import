@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-style-import",
-  "version": "0.4.6",
+  "version": "0.5.5",
   "description": "A plug-in that imports component library styles on demand",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -14,7 +14,7 @@
     "dev": "npm run build -- --watch",
     "build": "tsup src/index.ts --dts --format cjs,esm",
     "prepublishOnly": "yarn build",
-    "log": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
+    "log": "conventional-changelog -p angular -i CHANGELOG.md -s ",
     "example:dev": "npm -C example run serve",
     "example:build": "npm -C example run build"
   },
@@ -32,17 +32,16 @@
   },
   "homepage": "https://github.com/anncwb/vite-plugin-style-import/tree/master/#readme",
   "dependencies": {
-    "@babel/core": "^7.12.10",
-    "@babel/helper-module-imports": "^7.12.5",
-    "@babel/plugin-transform-typescript": "^7.12.1",
     "@rollup/pluginutils": "^4.1.0",
-    "change-case": "^4.1.2"
+    "change-case": "^4.1.2",
+    "es-module-lexer": "^0.3.26",
+    "magic-string": "^0.25.7"
   },
   "peerDependencies": {
     "vite": ">=2.0.0-beta.32"
   },
   "devDependencies": {
-    "@types/babel__core": "^7.1.12",
+    "@types/es-module-lexer": "^0.3.0",
     "@types/node": "^14.14.22",
     "conventional-changelog-cli": "^2.1.1",
     "ini": "^2.0.0",
@@ -50,6 +49,6 @@
     "rimraf": "^3.0.2",
     "tsup": "^3.12.0",
     "typescript": "^4.1.3",
-    "vite": "^2.0.0-beta.50"
+    "vite": "^2.0.0-beta.56"
   }
 }

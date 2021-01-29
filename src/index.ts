@@ -1,79 +1,13 @@
 import type { Plugin } from 'vite';
-import type { Lib, VitePluginComponentImport, Source } from './types';
-import { transformAsync, PluginObj, PluginItem } from '@babel/core';
+import type { Lib, VitePluginComponentImport } from './types';
 import { createFilter } from '@rollup/pluginutils';
 import * as changeCase from 'change-case';
-// @ts-ignore
-import { addSideEffect } from '@babel/helper-module-imports';
 import { ChangeCaseType, LibraryNameChangeCase } from './types';
+
+import { init, parse, ImportSpecifier } from 'es-module-lexer';
+import MagicString from 'magic-string';
 import path from 'path';
 import { normalizePath } from 'vite';
-
-function resolveNodeModules(...dir: string[]) {
-  return normalizePath(path.join(process.cwd(), 'node_modules', ...dir));
-}
-
-function needTransform(code: string, libs: Lib[]) {
-  return !libs.every(({ libraryName }) => {
-    return !new RegExp(`('${libraryName}')|("${libraryName}")`).test(code);
-  });
-}
-
-function getChangeCaseFileName(importedName: string, libraryNameChangeCase: LibraryNameChangeCase) {
-  try {
-    return changeCase[libraryNameChangeCase as ChangeCaseType](importedName);
-  } catch (error) {
-    return importedName;
-  }
-}
-
-function createBabelStyleImportPlugin({ types }: Record<string, any>): PluginObj {
-  return {
-    name: 'babel-plugin-style-import',
-    visitor: {
-      ImportDeclaration(path, source) {
-        const {
-          opts: { libs },
-        } = source as Source;
-        if (!libs) return;
-
-        const { node } = path;
-        const { value } = node.source;
-        const lib = libs.find((item) => item.libraryName === value);
-        if (!lib) return;
-
-        const { libraryName, resolveStyle, esModule, libraryNameChangeCase = 'paramCase' } = lib;
-
-        if (
-          !resolveStyle ||
-          typeof resolveStyle !== 'function' ||
-          !libraryName ||
-          value !== libraryName
-        )
-          return;
-
-        for (const specifier of node.specifiers) {
-          if (types.isImportSpecifier(specifier)) {
-            const importedName = (specifier as any).imported.name;
-
-            const name = getChangeCaseFileName(importedName, libraryNameChangeCase);
-            let importers = resolveStyle(name);
-            if (esModule) {
-              importers = resolveNodeModules(importers);
-            }
-            if (Array.isArray(importers)) {
-              importers.forEach((importer) => {
-                addSideEffect(path, importer);
-              });
-            } else {
-              addSideEffect(path, importers);
-            }
-          }
-        }
-      },
-    },
-  };
-}
 
 export default (options: VitePluginComponentImport): Plugin => {
   const {
@@ -84,36 +18,108 @@ export default (options: VitePluginComponentImport): Plugin => {
 
   const filter = createFilter(include, exclude);
 
-  let needSourceMap = true;
-
   return {
     name: 'vite:style-import',
-
-    configResolved(config) {
-      needSourceMap = config.command === 'serve' || !!config.build.sourcemap;
-    },
 
     async transform(code, id) {
       if (!filter(id) || !needTransform(code, libs)) return code;
 
-      const plugins: PluginItem[] = [[createBabelStyleImportPlugin, { libs }]];
-      if (id.endsWith('.tsx')) {
-        plugins.push([
-          require('@babel/plugin-transform-typescript'),
-          { isTSX: true, allowExtensions: true },
-        ]);
+      if (!code) {
+        return code;
       }
 
-      const babelResult = await transformAsync(code, {
-        plugins,
-        sourceFileName: id,
-        sourceMaps: needSourceMap,
-      });
+      await init;
+
+      let imports: ImportSpecifier[] = [];
+      try {
+        imports = parse(code)[0];
+      } catch (e) {
+        console.log(e);
+      }
+      if (!imports.length) {
+        return code;
+      }
+
+      let s: MagicString | undefined;
+      const str = () => s || (s = new MagicString(code));
+      for (let index = 0; index < imports.length; index++) {
+        const { s: start, e: end, se, ss } = imports[index];
+        const name = code.slice(start, end);
+        if (!name) {
+          continue;
+        }
+        const lib = getLib(name, libs);
+        if (!lib) {
+          continue;
+        }
+        const importStr = code.slice(ss, se);
+        const exportVariables = transformImportVar(importStr);
+        const importStrList = transformLibCss(lib, exportVariables);
+        str().prepend(importStrList.join(''));
+      }
 
       return {
-        code: babelResult?.code ?? code,
-        map: babelResult?.map ?? null,
+        code: str().toString(),
       };
     },
   };
 };
+
+// Generate the corresponding component css string array
+function transformLibCss(lib: Lib, exportVariables: string[]) {
+  const { libraryName, resolveStyle, esModule, libraryNameChangeCase = 'paramCase' } = lib;
+  if (!resolveStyle || typeof resolveStyle !== 'function' || !libraryName) {
+    return [];
+  }
+  const set = new Set();
+  for (let index = 0; index < exportVariables.length; index++) {
+    const name = getChangeCaseFileName(exportVariables[index], libraryNameChangeCase);
+
+    let importStr = resolveStyle(name);
+    if (esModule) {
+      importStr = resolveNodeModules(importStr);
+    }
+    set.add(`import '${importStr}';`);
+  }
+  return Array.from(set);
+}
+
+// Extract import variables
+function transformImportVar(importStr: string) {
+  if (!importStr) {
+    return [];
+  }
+
+  const exportStr = importStr.replace('import', 'export').replace(/\s+as\s+\w+,?/g, ',');
+  let exportVariables: string[] = [];
+  try {
+    exportVariables = parse(exportStr)[1];
+  } catch (error) {
+    console.error(error);
+  }
+  return exportVariables;
+}
+
+function getLib(libraryName: string, libs: Lib[]) {
+  return libs.find((item) => item.libraryName === libraryName);
+}
+
+// File name conversion style
+function getChangeCaseFileName(importedName: string, libraryNameChangeCase: LibraryNameChangeCase) {
+  try {
+    return changeCase[libraryNameChangeCase as ChangeCaseType](importedName);
+  } catch (error) {
+    return importedName;
+  }
+}
+
+// Do you need to process code
+function needTransform(code: string, libs: Lib[]) {
+  return !libs.every(({ libraryName }) => {
+    return !new RegExp(`('${libraryName}')|("${libraryName}")`).test(code);
+  });
+}
+
+function resolveNodeModules(...dir: string[]) {
+  return normalizePath(path.join(process.cwd(), 'node_modules', ...dir));
+}
