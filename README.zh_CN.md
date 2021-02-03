@@ -14,9 +14,17 @@
 
 **node version:** >=12.0.0
 
-**vite version:** >=2.0.0-beta.56
+**vite version:** >=2.0.0-beta.64
 
-`yarn add vite-plugin-style-import -D` or `npm i vite-plugin-style-import -D`
+```
+yarn add vite-plugin-style-import -D
+```
+
+or
+
+```
+npm i vite-plugin-style-import -D
+```
 
 ## 效果
 
