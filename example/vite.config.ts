@@ -12,6 +12,9 @@ export default (): UserConfigExport => {
         },
       },
     },
+    build: {
+      sourcemap: true,
+    },
     plugins: [
       vue(),
       jsx(),

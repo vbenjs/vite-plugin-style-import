@@ -18,14 +18,27 @@ export default (options: VitePluginComponentImport): Plugin => {
 
   const filter = createFilter(include, exclude);
 
+  let needSourcemap = false;
+
   return {
     name: 'vite:style-import',
-
+    configResolved(resolvedConfig) {
+      needSourcemap = resolvedConfig.isProduction && !!resolvedConfig.build.sourcemap;
+    },
     async transform(code, id) {
-      if (!filter(id) || !needTransform(code, libs)) return code;
+      const getMap = () => (needSourcemap ? this.getCombinedSourcemap() : null);
+
+      if (!filter(id) || !needTransform(code, libs))
+        return {
+          code,
+          map: getMap(),
+        };
 
       if (!code) {
-        return code;
+        return {
+          code,
+          map: getMap(),
+        };
       }
 
       await init;
@@ -37,7 +50,10 @@ export default (options: VitePluginComponentImport): Plugin => {
         console.log(e);
       }
       if (!imports.length) {
-        return code;
+        return {
+          code,
+          map: getMap(),
+        };
       }
 
       let s: MagicString | undefined;
@@ -60,6 +76,7 @@ export default (options: VitePluginComponentImport): Plugin => {
 
       return {
         code: str().toString(),
+        map: getMap(),
       };
     },
   };
