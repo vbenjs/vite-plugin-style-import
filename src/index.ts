@@ -23,22 +23,20 @@ export default (options: VitePluginComponentImport): Plugin => {
   return {
     name: 'vite:style-import',
     configResolved(resolvedConfig) {
-      needSourcemap = resolvedConfig.isProduction && !!resolvedConfig.build.sourcemap;
+      needSourcemap =
+        resolvedConfig.command === 'serve' ||
+        (resolvedConfig.isProduction && !!resolvedConfig.build.sourcemap);
     },
     async transform(code, id) {
-      const getMap = () => (needSourcemap ? this.getCombinedSourcemap() : null);
+      const getResult = (content: string) => ({
+        map: needSourcemap ? this.getCombinedSourcemap() : null,
+        code: content,
+      });
 
-      if (!filter(id) || !needTransform(code, libs))
-        return {
-          code,
-          map: getMap(),
-        };
+      if (!filter(id) || !needTransform(code, libs)) return getResult(code);
 
       if (!code) {
-        return {
-          code,
-          map: getMap(),
-        };
+        return getResult(code);
       }
 
       await init;
@@ -50,10 +48,7 @@ export default (options: VitePluginComponentImport): Plugin => {
         console.log(e);
       }
       if (!imports.length) {
-        return {
-          code,
-          map: getMap(),
-        };
+        return getResult(code);
       }
 
       let s: MagicString | undefined;
@@ -74,10 +69,7 @@ export default (options: VitePluginComponentImport): Plugin => {
         str().prepend(importStrList.join(''));
       }
 
-      return {
-        code: str().toString(),
-        map: getMap(),
-      };
+      return getResult(str().toString());
     },
   };
 };
