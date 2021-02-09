@@ -8,6 +8,9 @@ import { init, parse, ImportSpecifier } from 'es-module-lexer';
 import MagicString from 'magic-string';
 import path from 'path';
 import { normalizePath } from 'vite';
+import { debug as Debug } from 'debug';
+
+const debug = Debug('vite-plugin-style-import');
 
 export default (options: VitePluginComponentImport): Plugin => {
   const {
@@ -20,35 +23,37 @@ export default (options: VitePluginComponentImport): Plugin => {
 
   let needSourcemap = false;
 
+  debug('plugin options:', options);
+
   return {
     name: 'vite:style-import',
     configResolved(resolvedConfig) {
-      needSourcemap =
-        resolvedConfig.command === 'serve' ||
-        (resolvedConfig.isProduction && !!resolvedConfig.build.sourcemap);
+      needSourcemap = resolvedConfig.isProduction && !!resolvedConfig.build.sourcemap;
+      debug('plugin config:', resolvedConfig);
     },
     async transform(code, id) {
-      const getResult = (content: string) => ({
-        map: needSourcemap ? this.getCombinedSourcemap() : null,
-        code: content,
-      });
-
-      if (!filter(id) || !needTransform(code, libs)) return getResult(code);
-
-      if (!code) {
-        return getResult(code);
+      if (!code || !filter(id) || !needTransform(code, libs)) {
+        return null;
       }
+
+      const getResult = (content: string) => {
+        return {
+          map: needSourcemap ? this.getCombinedSourcemap() : null,
+          code: content,
+        };
+      };
 
       await init;
 
       let imports: ImportSpecifier[] = [];
       try {
         imports = parse(code)[0];
+        debug('imports:', imports);
       } catch (e) {
-        console.log(e);
+        debug('imports-error:', e);
       }
       if (!imports.length) {
-        return getResult(code);
+        return null;
       }
 
       let s: MagicString | undefined;
@@ -66,6 +71,7 @@ export default (options: VitePluginComponentImport): Plugin => {
         const importStr = code.slice(ss, se);
         const exportVariables = transformImportVar(importStr);
         const importStrList = transformLibCss(lib, exportVariables);
+        debug('prepend import str:', importStrList.join(''));
         str().prepend(importStrList.join(''));
       }
 
@@ -90,6 +96,7 @@ function transformLibCss(lib: Lib, exportVariables: string[]) {
     }
     set.add(`import '${importStr}';`);
   }
+  debug('import sets:', set.toString());
   return Array.from(set);
 }
 
@@ -103,8 +110,10 @@ function transformImportVar(importStr: string) {
   let exportVariables: string[] = [];
   try {
     exportVariables = parse(exportStr)[1];
+    debug('exportVariables:', exportVariables);
   } catch (error) {
     console.error(error);
+    debug('transformImportVar:', error);
   }
   return exportVariables;
 }
