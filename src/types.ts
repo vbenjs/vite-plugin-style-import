@@ -1,6 +1,9 @@
 export type RegOptions = string | RegExp | (string | RegExp)[] | null | undefined;
 
 export interface Lib {
+  /**
+   * Dependent library name
+   */
   libraryName: string;
   esModule?: boolean;
   resolveStyle: (name: string) => string;
