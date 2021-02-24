@@ -7,6 +7,7 @@ export interface Lib {
   libraryName: string;
   esModule?: boolean;
   libDirectory?: string,
+  resolveComponent?: (name: string) => string,
   resolveStyle: (name: string) => string;
   libraryNameChangeCase?: LibraryNameChangeCase;
 }

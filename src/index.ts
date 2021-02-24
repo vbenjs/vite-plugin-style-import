@@ -83,18 +83,12 @@ export default (options: VitePluginComponentImport): Plugin => {
          * import ElButton from 'element-plus/lib/button'
          * ```
          */
-        if (lib.libDirectory && viteConfig?.command === 'build') {
-          const importsRegExp = new RegExp(`import\s+\{.*\}\s+from\s+(\"|\')${lib.libDirectory}(\"|\')`, 'g');
+        if ((lib.libDirectory || lib.resolveComponent) && viteConfig?.command === 'build') {
           str()
             .overwrite(
               ss,
               se,
-              importStr.replace(
-                importsRegExp,
-                exportVariables
-                  .map(exportVar => `import ${exportVar} from "${lib.libraryName}/${lib.libDirectory}/${exportVar.toLowerCase()}"`)
-                  .join('\n')
-              )
+              transformLibComponent(lib, importStr, exportVariables)
             )
         }
         str().prepend(importStrList.join(''));
@@ -104,6 +98,22 @@ export default (options: VitePluginComponentImport): Plugin => {
     },
   };
 };
+
+// Change the component import code
+function transformLibComponent(lib: Lib, importStr: string, exportVariables: string[]) {
+  const importsRegExp = new RegExp(`import\\s+\\{.*\\}\\s+from\\s+(\\"|\\')${lib.libraryName}(\\"|\\')`, 'g');
+  return importStr.replace(
+    importsRegExp,
+    exportVariables
+      .map(exportVar => {
+        if (lib.resolveComponent) {
+          return `import ${exportVar} from "${lib.resolveComponent(exportVar)}"`
+        }
+        return `import ${exportVar} from "${lib.libraryName}/${lib.libDirectory}/${exportVar.toLowerCase()}"`
+      })
+      .join('\n')
+  )
+}
 
 // Generate the corresponding component css string array
 function transformLibCss(lib: Lib, exportVariables: string[]) {
