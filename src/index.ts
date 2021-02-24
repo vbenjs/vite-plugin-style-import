@@ -14,8 +14,11 @@ import MagicString from 'magic-string';
 import path from 'path';
 import { normalizePath } from 'vite';
 import { debug as Debug } from 'debug';
+import fs from 'fs';
 
 const debug = Debug('vite-plugin-style-import');
+
+const ensureFileExts: string[] = ['.css', 'js', '.scss', '.less', '.styl'];
 
 export default (options: VitePluginComponentImport): Plugin => {
   const {
@@ -107,7 +110,13 @@ export default (options: VitePluginComponentImport): Plugin => {
 
 // Generate the corresponding component css string array
 function transformComponentCss(lib: Lib, importVariables: string[]) {
-  const { libraryName, resolveStyle, esModule, libraryNameChangeCase = 'paramCase' } = lib;
+  const {
+    libraryName,
+    resolveStyle,
+    esModule,
+    libraryNameChangeCase = 'paramCase',
+    ensureStyleFile = false,
+  } = lib;
   if (!resolveStyle || typeof resolveStyle !== 'function' || !libraryName) {
     return [];
   }
@@ -119,7 +128,14 @@ function transformComponentCss(lib: Lib, importVariables: string[]) {
     if (esModule) {
       importStr = resolveNodeModules(importStr);
     }
-    set.add(`import '${importStr}';\n`);
+
+    let isAdd = true;
+
+    if (ensureStyleFile) {
+      isAdd = ensureFileExists(importStr, esModule);
+    }
+
+    isAdd && set.add(`import '${importStr}';\n`);
   }
   debug('import css sets:', set.toString());
   return Array.from(set);
@@ -168,6 +184,37 @@ function transformImportVar(importStr: string) {
     debug('transformImportVar:', error);
   }
   return importVariables;
+}
+
+// Make sure the file exists
+// Prevent errors when importing non-existent css files
+function ensureFileExists(importStr: string, esModule = false) {
+  const extName = path.extname(importStr);
+  if (!extName) {
+    return tryEnsureFile(importStr, esModule);
+  }
+
+  if (esModule) {
+    return fileExists(importStr);
+  }
+
+  return true;
+}
+
+function tryEnsureFile(filePath: string, esModule = false) {
+  const filePathList = ensureFileExts.map((item) => {
+    const p = `${filePath}${item}`;
+    return esModule ? p : resolveNodeModules(p);
+  });
+  return filePathList.some((item) => fileExists(item));
+}
+
+function fileExists(f: string) {
+  try {
+    return fs.existsSync(f);
+  } catch (error) {
+    return false;
+  }
 }
 
 function getLib(libraryName: string, libs: Lib[]) {

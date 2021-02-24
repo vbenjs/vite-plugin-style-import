@@ -14,6 +14,15 @@ export interface Lib {
    * Custom imported component style conversion
    */
   resolveStyle: (name: string) => string;
+
+  /**
+   * There may be some component libraries that are not very standardized.
+   * You can turn on this to ignore to determine whether the file exists. Prevent errors when importing non-existent css files.
+   * Performance may be slightly reduced after it is turned on, but the impact is not significant
+   * @default: false
+   */
+  ensureStyleFile?: boolean;
+
   /**
    * Custom component file conversion
    * Turning on the environment does not work

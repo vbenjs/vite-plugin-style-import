@@ -91,9 +91,9 @@ export default (): UserConfigExport => {
             resolveStyle: (name) => {
               return `element-plus/lib/theme-chalk/${name}.css`;
             },
-            // resolveComponent: (name) => {
-            //   return `element-plus/lib/${name}`;
-            // },
+            resolveComponent: (name) => {
+              return `element-plus/lib/${name}`;
+            },
           },
         ],
       }),
@@ -116,6 +116,7 @@ export default (): UserConfigExport => {
 {
   // 需要导入的库名
   libraryName: string;
+
   // 自定义样式转换
   resolveStyle: (name: string) => string ｜ string[];
 
@@ -125,11 +126,21 @@ export default (): UserConfigExport => {
 
 
   // 如果样式文件不是.css后缀。需要开启此选项
+  // default:false
   esModule?: boolean;
 
+
+   /**
+   * 可能有些组件库不是很标准化。
+   * 您可以打开此选项以忽略以确定文件是否存在。 导入不存在的CSS文件时防止错误。
+   * 开启后性能可能会略有下降，但影响不大
+   * default: false
+   */
+  ensureStyleFile?: boolean;
+
    // https://github.com/anncwb/vite-plugin-style-import/pull/5
-  // 用于一些可能需要按需引入组件的情况,不单单只是引入样式
-  // ! 开启环境不起作用
+  // 用于一些可能需要按需引入组件的情况,不单单只是引入样式(对Esm不能很好支持的库)
+  // 仅在生产环境工作
   resolveComponent?: (name: string) => string;
 }
 

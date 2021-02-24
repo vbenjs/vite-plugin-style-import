@@ -91,9 +91,9 @@ export default (): UserConfigExport => {
             resolveStyle: (name) => {
               return `element-plus/lib/theme-chalk/${name}.css`;
             },
-            // resolveComponent: (name) => {
-            //   return `element-plus/lib/${name}`;
-            // },
+            resolveComponent: (name) => {
+              return `element-plus/lib/${name}`;
+            },
           },
         ],
       }),
@@ -116,6 +116,7 @@ export default (): UserConfigExport => {
 {
   // Need to imported  library name
   libraryName: string;
+
   // Custom style file conversion
   resolveStyle: (name: string) => string;
 
@@ -124,12 +125,20 @@ export default (): UserConfigExport => {
   libraryNameChangeCase?: LibraryNameChangeCase;
 
   // If the style file is not .css suffix. Need to turn on this option
+  // default: false
   esModule?: boolean;
 
+  /**
+   * There may be some component libraries that are not very standardized.
+   * You can turn on this to ignore to determine whether the file exists. Prevent errors when importing non-existent css files.
+   * Performance may be slightly reduced after it is turned on, but the impact is not significant
+   * default: false
+   */
+  ensureStyleFile?: boolean;
 
   // https://github.com/anncwb/vite-plugin-style-import/pull/5
-  // Used in some situations where components may need to be introduced on demand, not just to introduce styles
-  // Turning on the environment does not work
+  // Used in some situations where components may need to be introduced on demand, not just to introduce styles.(Libraries that don't support Esm well)
+  // Only work in production
   resolveComponent?: (name: string) => string;
 }
 

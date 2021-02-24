@@ -29,9 +29,9 @@ export default (): UserConfigExport => {
             resolveStyle: (name) => {
               return `element-plus/lib/theme-chalk/${name}.css`;
             },
-            // resolveComponent: (name) => {
-            //   return `element-plus/lib/${name}`;
-            // },
+            resolveComponent: (name) => {
+              return `element-plus/lib/${name}`;
+            },
           },
         ],
       }),
