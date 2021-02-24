@@ -125,6 +125,9 @@ export default (): UserConfigExport => {
 
   // Replace component file loading path. Only effective when building
   libDirectory?: string
+
+  // Custom component file conversion
+  resolveComponent: (name: string) => string;
 }
 
 // LibraryNameChangeCase
