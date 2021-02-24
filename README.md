@@ -14,7 +14,7 @@ Because vite itself has imported the component library on demand, only the style
 
 **node version:** >=12.0.0
 
-**vite version:** >=2.0.0-beta.64
+**vite version:** >=2.0.0
 
 ```
 yarn add vite-plugin-style-import -D
@@ -91,6 +91,9 @@ export default (): UserConfigExport => {
             resolveStyle: (name) => {
               return `element-plus/lib/theme-chalk/${name}.css`;
             },
+            // resolveComponent: (name) => {
+            //   return `element-plus/lib/${name}`;
+            // },
           },
         ],
       }),
@@ -103,8 +106,8 @@ export default (): UserConfigExport => {
 
 | param | type | default | description |
 | --- | --- | --- | --- |
-| include | `string / RegExp / (string / RegExp)[] / null / undefined` | `['**/*.js', '**/*.ts', '**/*.tsx', '**/*.jsx']` | Code directory and file format to be converted |
-| exclude | `string / RegExp / (string / RegExp)[] / null / undefined` | `'node_modules/**'` | Excluded files/folders |
+| include | `string、RegExp、(string、RegExp)[]、null、undefined` | `['**/*.js', '**/*.ts', '**/*.tsx', '**/*.jsx']` | Code directory and file format to be converted |
+| exclude | `string、RegExp、(string、RegExp)[]、null、undefined` | `'node_modules/**'` | Excluded files/folders |
 | libs | `Lib[]` |  | List of libraries to be imported |
 
 **Lib**
@@ -123,6 +126,11 @@ export default (): UserConfigExport => {
   // If the style file is not .css suffix. Need to turn on this option
   esModule?: boolean;
 
+
+  // https://github.com/anncwb/vite-plugin-style-import/pull/5
+  // Used in some situations where components may need to be introduced on demand, not just to introduce styles
+  // Turning on the environment does not work
+  resolveComponent?: (name: string) => string;
 }
 
 // LibraryNameChangeCase

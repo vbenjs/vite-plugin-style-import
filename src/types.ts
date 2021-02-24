@@ -5,8 +5,24 @@ export interface Lib {
    * Dependent library name
    */
   libraryName: string;
+  /**
+   * When the imported style file does not end with .css, it needs to be turned on
+   * @default: false
+   */
   esModule?: boolean;
+  /**
+   * Custom imported component style conversion
+   */
   resolveStyle: (name: string) => string;
+  /**
+   * Custom component file conversion
+   * Turning on the environment does not work
+   */
+  resolveComponent?: (name: string) => string;
+  /**
+   * Customize imported component file name style conversion
+   * @default: paramCase
+   */
   libraryNameChangeCase?: LibraryNameChangeCase;
 }
 

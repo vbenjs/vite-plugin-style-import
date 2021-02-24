@@ -12,9 +12,6 @@ export default (): UserConfigExport => {
         },
       },
     },
-    build: {
-      sourcemap: true,
-    },
     plugins: [
       vue(),
       jsx(),
@@ -32,6 +29,9 @@ export default (): UserConfigExport => {
             resolveStyle: (name) => {
               return `element-plus/lib/theme-chalk/${name}.css`;
             },
+            // resolveComponent: (name) => {
+            //   return `element-plus/lib/${name}`;
+            // },
           },
         ],
       }),

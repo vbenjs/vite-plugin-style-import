@@ -1,9 +1,14 @@
 import type { Plugin } from 'vite';
-import type { Lib, VitePluginComponentImport } from './types';
+
+import type {
+  ChangeCaseType,
+  VitePluginComponentImport,
+  LibraryNameChangeCase,
+  Lib,
+} from './types';
+
 import { createFilter } from '@rollup/pluginutils';
 import * as changeCase from 'change-case';
-import { ChangeCaseType, LibraryNameChangeCase } from './types';
-
 import { init, parse, ImportSpecifier } from 'es-module-lexer';
 import MagicString from 'magic-string';
 import path from 'path';
@@ -22,6 +27,7 @@ export default (options: VitePluginComponentImport): Plugin => {
   const filter = createFilter(include, exclude);
 
   let needSourcemap = false;
+  let isBuild = false;
 
   debug('plugin options:', options);
 
@@ -29,6 +35,7 @@ export default (options: VitePluginComponentImport): Plugin => {
     name: 'vite:style-import',
     configResolved(resolvedConfig) {
       needSourcemap = resolvedConfig.isProduction && !!resolvedConfig.build.sourcemap;
+      isBuild = resolvedConfig.isProduction || resolvedConfig.command === 'build';
       debug('plugin config:', resolvedConfig);
     },
     async transform(code, id) {
@@ -45,7 +52,7 @@ export default (options: VitePluginComponentImport): Plugin => {
 
       await init;
 
-      let imports: ImportSpecifier[] = [];
+      let imports: (ImportSpecifier & { n?: string })[] = [];
       try {
         imports = parse(code)[0];
         debug('imports:', imports);
@@ -58,46 +65,91 @@ export default (options: VitePluginComponentImport): Plugin => {
 
       let s: MagicString | undefined;
       const str = () => s || (s = new MagicString(code));
-      for (let index = 0; index < imports.length; index++) {
-        const { s: start, e: end, se, ss } = imports[index];
-        const name = code.slice(start, end);
-        if (!name) {
-          continue;
-        }
-        const lib = getLib(name, libs);
-        if (!lib) {
-          continue;
-        }
-        const importStr = code.slice(ss, se);
-        const exportVariables = transformImportVar(importStr);
-        const importStrList = transformLibCss(lib, exportVariables);
-        debug('prepend import str:', importStrList.join(''));
-        str().prepend(importStrList.join(''));
-      }
 
+      for (let index = 0; index < imports.length; index++) {
+        const { n, se, ss } = imports[index];
+        if (!n) continue;
+
+        const lib = getLib(n, libs);
+        if (!lib) continue;
+
+        const isResolveComponent = isBuild && !!lib.resolveComponent;
+
+        const importStr = code.slice(ss, se);
+        const importVariables = transformImportVar(importStr);
+        const importCssStrList = transformComponentCss(lib, importVariables);
+
+        let compStrList: string[] = [];
+        let compNameList: string[] = [];
+
+        if (isResolveComponent) {
+          const { componentStrList, componentNameList } = transformComponent(lib, importVariables);
+          compStrList = componentStrList;
+          compNameList = componentNameList;
+        }
+
+        debug('prepend import css str:', importCssStrList.join(''));
+        debug('prepend import component str:', compStrList.join(''));
+
+        // TODO There may be boundary conditions. There is no semicolon ending in the code and the code is connected to one period. But such code should be very bad
+        const endIndex = se + 1;
+
+        str().prependRight(endIndex, `\n${compStrList.join('')}${importCssStrList.join('')} `);
+
+        if (isResolveComponent && compNameList.some((item) => importVariables.includes(item))) {
+          str().remove(ss, endIndex);
+        }
+      }
       return getResult(str().toString());
     },
   };
 };
 
 // Generate the corresponding component css string array
-function transformLibCss(lib: Lib, exportVariables: string[]) {
+function transformComponentCss(lib: Lib, importVariables: string[]) {
   const { libraryName, resolveStyle, esModule, libraryNameChangeCase = 'paramCase' } = lib;
   if (!resolveStyle || typeof resolveStyle !== 'function' || !libraryName) {
     return [];
   }
-  const set = new Set();
-  for (let index = 0; index < exportVariables.length; index++) {
-    const name = getChangeCaseFileName(exportVariables[index], libraryNameChangeCase);
+  const set = new Set<string>();
+  for (let index = 0; index < importVariables.length; index++) {
+    const name = getChangeCaseFileName(importVariables[index], libraryNameChangeCase);
 
     let importStr = resolveStyle(name);
     if (esModule) {
       importStr = resolveNodeModules(importStr);
     }
-    set.add(`import '${importStr}';`);
+    set.add(`import '${importStr}';\n`);
   }
-  debug('import sets:', set.toString());
+  debug('import css sets:', set.toString());
   return Array.from(set);
+}
+
+// Generate the corresponding component  string array
+function transformComponent(lib: Lib, importVariables: string[]) {
+  const { libraryName, resolveComponent, libraryNameChangeCase = 'paramCase' } = lib;
+  if (!resolveComponent || typeof resolveComponent !== 'function' || !libraryName) {
+    return {
+      componentStrList: [],
+      componentNameList: [],
+    };
+  }
+
+  const componentNameSet = new Set<string>();
+
+  const componentStrSet = new Set<string>();
+  for (let index = 0; index < importVariables.length; index++) {
+    const libName = importVariables[index];
+    const name = getChangeCaseFileName(importVariables[index], libraryNameChangeCase);
+    let importStr = resolveComponent(name);
+    componentStrSet.add(`import ${libName} from  '${importStr}';\n`);
+    componentNameSet.add(libName);
+  }
+  debug('import component set:', componentStrSet.toString());
+  return {
+    componentStrList: Array.from(componentStrSet),
+    componentNameList: Array.from(componentNameSet),
+  };
 }
 
 // Extract import variables
@@ -107,15 +159,15 @@ function transformImportVar(importStr: string) {
   }
 
   const exportStr = importStr.replace('import', 'export').replace(/\s+as\s+\w+,?/g, ',');
-  let exportVariables: string[] = [];
+  let importVariables: string[] = [];
   try {
-    exportVariables = parse(exportStr)[1];
-    debug('exportVariables:', exportVariables);
+    importVariables = parse(exportStr)[1];
+    debug('importVariables:', importVariables);
   } catch (error) {
     console.error(error);
     debug('transformImportVar:', error);
   }
-  return exportVariables;
+  return importVariables;
 }
 
 function getLib(libraryName: string, libs: Lib[]) {

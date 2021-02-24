@@ -14,7 +14,7 @@
 
 **node version:** >=12.0.0
 
-**vite version:** >=2.0.0-beta.64
+**vite version:** >=2.0.0
 
 ```
 yarn add vite-plugin-style-import -D
@@ -91,6 +91,9 @@ export default (): UserConfigExport => {
             resolveStyle: (name) => {
               return `element-plus/lib/theme-chalk/${name}.css`;
             },
+            // resolveComponent: (name) => {
+            //   return `element-plus/lib/${name}`;
+            // },
           },
         ],
       }),
@@ -103,8 +106,8 @@ export default (): UserConfigExport => {
 
 | 参数 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
-| include | `string / RegExp / (string / RegExp)[] / null / undefined` | `['**/*.js', '**/*.ts', '**/*.tsx', '**/*.jsx']` | 包含的文件格式 |
-| exclude | `string / RegExp / (string / RegExp)[] / null / undefined` | `'node_modules/**'` | 排除的的文件/文件夹 |
+| include | `string 、 RegExp 、(string 、RegExp)[] 、null 、undefined` | `['**/*.js', '**/*.ts', '**/*.tsx', '**/*.jsx']` | 包含的文件格式 |
+| exclude | `string 、RegExp 、 (string 、 RegExp)[] 、 null 、 undefined` | `'node_modules/**'` | 排除的的文件/文件夹 |
 | libs | `Lib[]` |  | 要导入的库列表 |
 
 **Lib**
@@ -122,7 +125,12 @@ export default (): UserConfigExport => {
 
 
   // 如果样式文件不是.css后缀。需要开启此选项
-  esModule?: boolean
+  esModule?: boolean;
+
+   // https://github.com/anncwb/vite-plugin-style-import/pull/5
+  // 用于一些可能需要按需引入组件的情况,不单单只是引入样式
+  // ! 开启环境不起作用
+  resolveComponent?: (name: string) => string;
 }
 
 // LibraryNameChangeCase
