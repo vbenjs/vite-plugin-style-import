@@ -123,6 +123,8 @@ export default (): UserConfigExport => {
   // If the style file is not .css suffix. Need to turn on this option
   esModule?: boolean;
 
+  // Replace component file loading path. Only effective when building
+  libDirectory?: string
 }
 
 // LibraryNameChangeCase

@@ -1,4 +1,4 @@
-import type { Plugin } from 'vite';
+import type { Plugin, ResolvedConfig } from 'vite';
 import type { Lib, VitePluginComponentImport } from './types';
 import { createFilter } from '@rollup/pluginutils';
 import * as changeCase from 'change-case';
@@ -22,12 +22,14 @@ export default (options: VitePluginComponentImport): Plugin => {
   const filter = createFilter(include, exclude);
 
   let needSourcemap = false;
+  let viteConfig: undefined | ResolvedConfig
 
   debug('plugin options:', options);
 
   return {
     name: 'vite:style-import',
     configResolved(resolvedConfig) {
+      viteConfig = resolvedConfig
       needSourcemap = resolvedConfig.isProduction && !!resolvedConfig.build.sourcemap;
       debug('plugin config:', resolvedConfig);
     },
@@ -72,6 +74,29 @@ export default (options: VitePluginComponentImport): Plugin => {
         const exportVariables = transformImportVar(importStr);
         const importStrList = transformLibCss(lib, exportVariables);
         debug('prepend import str:', importStrList.join(''));
+        /**
+         * Replace components' import path with libDirectory for some "old" ui library in build mode
+         * @example
+         * ```js
+         * import { ElButton } from 'element-plus'
+         * // replace
+         * import ElButton from 'element-plus/lib/button'
+         * ```
+         */
+        if (lib.libDirectory && viteConfig?.command === 'build') {
+          const importsRegExp = new RegExp(`import\s+\{.*\}\s+from\s+(\"|\')${lib.libDirectory}(\"|\')`, 'g');
+          str()
+            .overwrite(
+              ss,
+              se,
+              importStr.replace(
+                importsRegExp,
+                exportVariables
+                  .map(exportVar => `import ${exportVar} from "${lib.libraryName}/${lib.libDirectory}/${exportVar.toLowerCase()}"`)
+                  .join('\n')
+              )
+            )
+        }
         str().prepend(importStrList.join(''));
       }
 
