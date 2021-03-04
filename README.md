@@ -45,7 +45,12 @@ import { ElButton } from 'element-plus';
 
         ↓ ↓ ↓ ↓ ↓ ↓
 
+// dev
 import { Button } from 'element-plus';
+import 'element-plus/lib/theme-chalk/el-button.css`;
+
+// prod
+import Button from 'element-plus/lib/el-button';
 import 'element-plus/lib/theme-chalk/el-button.css`;
 
 ```
@@ -84,6 +89,13 @@ export default (): UserConfigExport => {
             esModule: true,
             resolveStyle: (name) => {
               return `antd/es/${name}/style/index`;
+            },
+          },
+          {
+            libraryName: 'vant',
+            esModule: true,
+            resolveStyle: (name) => {
+              return `vant/es/${name}/style/index`;
             },
           },
           {

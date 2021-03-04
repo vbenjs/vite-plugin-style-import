@@ -8,6 +8,7 @@
   "dependencies": {
     "ant-design-vue": "^2.0.1",
     "element-plus": "^1.0.2-beta.32",
+    "vant": "^3.0.7",
     "vue": "^3.0.7"
   },
   "devDependencies": {

@@ -25,6 +25,13 @@ export default (): UserConfigExport => {
             },
           },
           {
+            libraryName: 'vant',
+            esModule: true,
+            resolveStyle: (name) => {
+              return `vant/es/${name}/style/index`;
+            },
+          },
+          {
             libraryName: 'element-plus',
             resolveStyle: (name) => {
               return `element-plus/lib/theme-chalk/${name}.css`;

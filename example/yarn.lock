@@ -231,6 +231,13 @@
     "@babel/helper-plugin-utils" "^7.10.4"
     "@babel/plugin-syntax-typescript" "^7.12.1"
 
+"@babel/runtime@7.x":
+  version "7.13.9"
+  resolved "https://registry.npmjs.org/@babel/runtime/-/runtime-7.13.9.tgz#97dbe2116e2630c489f22e0656decd60aaa1fcee"
+  integrity sha512-aY2kU+xgJ3dJ1eU6FMB9EH8dIe8dmusF1xEku52joLvw6eAFN0AI+WxCLDnpev2LEejWBAy2sBvBOBAjI3zmvA==
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
 "@babel/runtime@^7.10.5":
   version "7.12.5"
   resolved "https://registry.npmjs.org/@babel/runtime/-/runtime-7.12.5.tgz#410e7e487441e1b360c29be715d870d9b985882e"
@@ -290,6 +297,11 @@
   resolved "https://registry.npmjs.org/@popperjs/core/-/core-2.6.0.tgz#f022195afdfc942e088ee2101285a1d31c7d727f"
   integrity sha512-cPqjjzuFWNK3BSKLm0abspP0sp/IGOli4p5I5fKFAzdS8fvjdOwDCfZqAaIiXd9lPkOWi3SUUfZof3hEb7J/uw==
 
+"@popperjs/core@^2.5.4":
+  version "2.9.0"
+  resolved "https://registry.npmjs.org/@popperjs/core/-/core-2.9.0.tgz#32e63212293dd3efbb521cd35a5020ab66eaa546"
+  integrity sha512-wjtKehFAIARq2OxK8j3JrggNlEslJfNuSm2ArteIbKyRMts2g0a7KzTxfRVNUM+O0gnBJ2hNV8nWPOYBgI1sew==
+
 "@rollup/pluginutils@^4.1.0":
   version "4.1.0"
   resolved "https://registry.npmjs.org/@rollup/pluginutils/-/pluginutils-4.1.0.tgz#0dcc61c780e39257554feb7f77207dceca13c838"
@@ -310,6 +322,30 @@
   version "4.14.167"
   resolved "https://registry.npmjs.org/@types/lodash/-/lodash-4.14.167.tgz#ce7d78553e3c886d4ea643c37ec7edc20f16765e"
   integrity sha512-w7tQPjARrvdeBkX/Rwg95S592JwxqOjmms3zWQ0XZgSyxSLdzWaYH3vErBhdVS/lRBX7F8aBYcYJYTr5TMGOzw==
+
+"@vant/icons@^1.5.3":
+  version "1.5.3"
+  resolved "https://registry.npmjs.org/@vant/icons/-/icons-1.5.3.tgz#b7779f67bf608d417a82452fbede406dfa46b439"
+  integrity sha512-OQaJqAWN6quHicWje4buknX9zcDo3UDy3X4nrk/ldnr9Fj8Str4nMtQbMbIrCMtmjQdP2ei769uuY508dudrjA==
+
+"@vant/lazyload@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.npmjs.org/@vant/lazyload/-/lazyload-1.0.2.tgz#1ca486bee2b9465ae005a88014bee873a647f763"
+  integrity sha512-v8q+M59R6J+H2l544zD/Uz+LNWwcIFsbIX+gprBK/O6qLjl4l9IxDW1gjZc7xOz/aMequZ9ACIHOa9wXStupow==
+
+"@vant/popperjs@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.npmjs.org/@vant/popperjs/-/popperjs-1.0.4.tgz#49c20809a3828e7b036e23d50fb56121e997618f"
+  integrity sha512-bqbmOoX0kYexGw65awNX9wxePR0ZIdTlVP+7JRahrbUjKW0+HxC2T27NE90cCDmqiFL/6+QYazhLvVa436jV0A==
+  dependencies:
+    "@popperjs/core" "^2.5.4"
+
+"@vant/use@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.npmjs.org/@vant/use/-/use-1.0.5.tgz#44bee952ebccf9396414a51c4d4b458434a9de23"
+  integrity sha512-Zf7t/KO9K6WjPUC+75KB8yTAauoSLAcTzxYCLjdMbbiCRG/oDfb5qTmaka2Hr5cV6k7cEa1cNBXCy+0UMcZNbQ==
+  dependencies:
+    "@babel/runtime" "7.x"
 
 "@vitejs/plugin-vue-jsx@^1.1.2":
   version "1.1.2"
@@ -1325,6 +1361,17 @@ util-deprecate@^1.0.2:
   version "1.0.2"
   resolved "https://registry.npmjs.org/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
   integrity sha1-RQ1Nyfpw3nMnYvvS1KKJgUGaDM8=
+
+vant@^3.0.7:
+  version "3.0.7"
+  resolved "https://registry.npmjs.org/vant/-/vant-3.0.7.tgz#2083d285f330e2849447197511c8256a2eb7fc0d"
+  integrity sha512-KbP82cjLj70g9SFkGvfQKlgm81Irq5LRM/otyhp7IUHITdNUi2+sgkKc6SLGXAE2bU1qaEtDB1Xp7v/9j2k9yA==
+  dependencies:
+    "@babel/runtime" "7.x"
+    "@vant/icons" "^1.5.3"
+    "@vant/lazyload" "^1.0.2"
+    "@vant/popperjs" "^1.0.4"
+    "@vant/use" "^1.0.5"
 
 vite-plugin-style-import@^0.7.5:
   version "0.7.5"

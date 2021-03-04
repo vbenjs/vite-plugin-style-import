@@ -14,6 +14,8 @@
     <p>element-plus</p>
 
     <el-button>el-button</el-button>
+
+    <Button>vant btn</Button>
   </div>
 </template>
 
@@ -24,10 +26,10 @@
   import TestJsx from './Test1';
   import { ElAlert } from 'element-plus';
   import { Affix, Cascader } from 'ant-design-vue';
-
+  import { Button } from 'vant';
   export default defineComponent({
     name: 'App',
-    components: { TestTsx, TestJsx, ElAlert, Affix, Cascader },
+    components: { TestTsx, TestJsx, ElAlert, Affix, Cascader, Button },
     setup() {
       return {};
     },
