@@ -1,16 +1,17 @@
-## [0.7.6](https://github.com/anncwb/vite-plugin-style-import/compare/v0.7.5...v0.7.6) (2021-03-02)
-
-
-
-## [0.7.5](https://github.com/anncwb/vite-plugin-style-import/compare/v0.7.4...v0.7.5) (2021-02-24)
-
+# [0.8.0](https://github.com/anncwb/vite-plugin-style-import/compare/v0.7.6...v0.8.0) (2021-03-06)
 
 ### Features
 
-* add ensureStyleFile to ensure that the style file exists [#4](https://github.com/anncwb/vite-plugin-style-import/issues/4) ([70e34d9](https://github.com/anncwb/vite-plugin-style-import/commit/70e34d932f7f6f4c7e815317f5476f347a62457d))
-* add the resolveComponent option for converting components. close [#5](https://github.com/anncwb/vite-plugin-style-import/issues/5) ([50087a2](https://github.com/anncwb/vite-plugin-style-import/commit/50087a20ac8918ff19b566f316f474c3801f47cd))
+- **option:** add root option ([7881b27](https://github.com/anncwb/vite-plugin-style-import/commit/7881b2781a42a809f913d51f4d8e16e7800fb043))
 
+## [0.7.6](https://github.com/anncwb/vite-plugin-style-import/compare/v0.7.5...v0.7.6) (2021-03-02)
 
+## [0.7.5](https://github.com/anncwb/vite-plugin-style-import/compare/v0.7.4...v0.7.5) (2021-02-24)
+
+### Features
+
+- add ensureStyleFile to ensure that the style file exists [#4](https://github.com/anncwb/vite-plugin-style-import/issues/4) ([70e34d9](https://github.com/anncwb/vite-plugin-style-import/commit/70e34d932f7f6f4c7e815317f5476f347a62457d))
+- add the resolveComponent option for converting components. close [#5](https://github.com/anncwb/vite-plugin-style-import/issues/5) ([50087a2](https://github.com/anncwb/vite-plugin-style-import/commit/50087a20ac8918ff19b566f316f474c3801f47cd))
 
 ## 0.7.4 (2021-02-23)
 
