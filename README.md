@@ -121,6 +121,7 @@ export default (): UserConfigExport => {
 | include | `string、RegExp、(string、RegExp)[]、null、undefined` | `['**/*.js', '**/*.ts', '**/*.tsx', '**/*.jsx']` | Code directory and file format to be converted |
 | exclude | `string、RegExp、(string、RegExp)[]、null、undefined` | `'node_modules/**'` | Excluded files/folders |
 | libs | `Lib[]` |  | List of libraries to be imported |
+| root | `string` | `process.cwd()` | Depends on the root directory, if it is a monorepo project, you need to set it manually |
 
 **Lib**
 

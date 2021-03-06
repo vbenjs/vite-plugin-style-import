@@ -120,7 +120,8 @@ export default (): UserConfigExport => {
 | --- | --- | --- | --- |
 | include | `string 、 RegExp 、(string 、RegExp)[] 、null 、undefined` | `['**/*.js', '**/*.ts', '**/*.tsx', '**/*.jsx']` | 包含的文件格式 |
 | exclude | `string 、RegExp 、 (string 、 RegExp)[] 、 null 、 undefined` | `'node_modules/**'` | 排除的的文件/文件夹 |
-| libs | `Lib[]` |  | 要导入的库列表 |
+| libs | `Lib[]` | - | 要导入的库列表 |
+| root | `string` | `process.cwd()` | 依赖根目录,如果是 monorepo 项目,需要手动设置 |
 
 **Lib**
 
