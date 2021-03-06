@@ -38,6 +38,10 @@ export interface Lib {
 export interface VitePluginComponentImport {
   include?: RegOptions;
   exclude?: RegOptions;
+  /**
+   * @default process.cwd()
+   */
+  root?: string;
   libs: Lib[];
 }
 

@@ -51,7 +51,7 @@ import 'element-plus/lib/theme-chalk/el-button.css`;
 
 // prod
 import Button from 'element-plus/lib/el-button';
-import 'element-plus/lib/theme-chalk/el-button.css`;
+import 'element-plus/lib/theme-chalk/el-button.css';
 
 ```
 

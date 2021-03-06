@@ -24,6 +24,7 @@ export default (options: VitePluginComponentImport): Plugin => {
   const {
     include = ['**/*.vue', '**/*.ts', '**/*.js', '**/*.tsx', '**/*.jsx'],
     exclude = 'node_modules/**',
+    root = process.cwd(),
     libs = [],
   } = options;
 
@@ -55,7 +56,7 @@ export default (options: VitePluginComponentImport): Plugin => {
 
       await init;
 
-      let imports: (ImportSpecifier & { n?: string })[] = [];
+      let imports: readonly ImportSpecifier[] = [];
       try {
         imports = parse(code)[0];
         debug('imports:', imports);
@@ -80,7 +81,7 @@ export default (options: VitePluginComponentImport): Plugin => {
 
         const importStr = code.slice(ss, se);
         const importVariables = transformImportVar(importStr);
-        const importCssStrList = transformComponentCss(lib, importVariables);
+        const importCssStrList = transformComponentCss(root, lib, importVariables);
 
         let compStrList: string[] = [];
         let compNameList: string[] = [];
@@ -109,7 +110,7 @@ export default (options: VitePluginComponentImport): Plugin => {
 };
 
 // Generate the corresponding component css string array
-function transformComponentCss(lib: Lib, importVariables: string[]) {
+function transformComponentCss(root: string, lib: Lib, importVariables: readonly string[]) {
   const {
     libraryName,
     resolveStyle,
@@ -126,13 +127,13 @@ function transformComponentCss(lib: Lib, importVariables: string[]) {
 
     let importStr = resolveStyle(name);
     if (esModule) {
-      importStr = resolveNodeModules(importStr);
+      importStr = resolveNodeModules(root, importStr);
     }
 
     let isAdd = true;
 
     if (ensureStyleFile) {
-      isAdd = ensureFileExists(importStr, esModule);
+      isAdd = ensureFileExists(root, importStr, esModule);
     }
 
     isAdd && set.add(`import '${importStr}';\n`);
@@ -142,7 +143,7 @@ function transformComponentCss(lib: Lib, importVariables: string[]) {
 }
 
 // Generate the corresponding component  string array
-function transformComponent(lib: Lib, importVariables: string[]) {
+function transformComponent(lib: Lib, importVariables: readonly string[]) {
   const { libraryName, resolveComponent, libraryNameChangeCase = 'paramCase' } = lib;
   if (!resolveComponent || typeof resolveComponent !== 'function' || !libraryName) {
     return {
@@ -157,7 +158,7 @@ function transformComponent(lib: Lib, importVariables: string[]) {
   for (let index = 0; index < importVariables.length; index++) {
     const libName = importVariables[index];
     const name = getChangeCaseFileName(importVariables[index], libraryNameChangeCase);
-    let importStr = resolveComponent(name);
+    const importStr = resolveComponent(name);
     componentStrSet.add(`import ${libName} from  '${importStr}';\n`);
     componentNameSet.add(libName);
   }
@@ -169,18 +170,17 @@ function transformComponent(lib: Lib, importVariables: string[]) {
 }
 
 // Extract import variables
-function transformImportVar(importStr: string) {
+export function transformImportVar(importStr: string) {
   if (!importStr) {
     return [];
   }
 
   const exportStr = importStr.replace('import', 'export').replace(/\s+as\s+\w+,?/g, ',');
-  let importVariables: string[] = [];
+  let importVariables: readonly string[] = [];
   try {
     importVariables = parse(exportStr)[1];
     debug('importVariables:', importVariables);
   } catch (error) {
-    console.error(error);
     debug('transformImportVar:', error);
   }
   return importVariables;
@@ -188,10 +188,10 @@ function transformImportVar(importStr: string) {
 
 // Make sure the file exists
 // Prevent errors when importing non-existent css files
-function ensureFileExists(importStr: string, esModule = false) {
+function ensureFileExists(root: string, importStr: string, esModule = false) {
   const extName = path.extname(importStr);
   if (!extName) {
-    return tryEnsureFile(importStr, esModule);
+    return tryEnsureFile(root, importStr, esModule);
   }
 
   if (esModule) {
@@ -201,10 +201,10 @@ function ensureFileExists(importStr: string, esModule = false) {
   return true;
 }
 
-function tryEnsureFile(filePath: string, esModule = false) {
+function tryEnsureFile(root: string, filePath: string, esModule = false) {
   const filePathList = ensureFileExts.map((item) => {
     const p = `${filePath}${item}`;
-    return esModule ? p : resolveNodeModules(p);
+    return esModule ? p : resolveNodeModules(root, p);
   });
   return filePathList.some((item) => fileExists(item));
 }
@@ -222,7 +222,10 @@ function getLib(libraryName: string, libs: Lib[]) {
 }
 
 // File name conversion style
-function getChangeCaseFileName(importedName: string, libraryNameChangeCase: LibraryNameChangeCase) {
+export function getChangeCaseFileName(
+  importedName: string,
+  libraryNameChangeCase: LibraryNameChangeCase
+) {
   try {
     return changeCase[libraryNameChangeCase as ChangeCaseType](importedName);
   } catch (error) {
@@ -237,6 +240,6 @@ function needTransform(code: string, libs: Lib[]) {
   });
 }
 
-function resolveNodeModules(...dir: string[]) {
-  return normalizePath(path.join(process.cwd(), 'node_modules', ...dir));
+function resolveNodeModules(root: string, ...dir: string[]) {
+  return normalizePath(path.join(root, 'node_modules', ...dir));
 }
