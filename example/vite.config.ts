@@ -28,7 +28,7 @@ export default (): UserConfigExport => {
             libraryName: 'vant',
             esModule: true,
             resolveStyle: (name) => {
-              return `vant/es/${name}/style/index`;
+              return `vant/lib/${name}/style/less`;
             },
           },
           {

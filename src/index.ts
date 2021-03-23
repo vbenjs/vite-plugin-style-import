@@ -37,8 +37,9 @@ export default (options: VitePluginComponentImport): Plugin => {
 
   return {
     name: 'vite:style-import',
+    enforce: 'pre',
     configResolved(resolvedConfig) {
-      needSourcemap = resolvedConfig.isProduction && !!resolvedConfig.build.sourcemap;
+      needSourcemap = !!resolvedConfig.build.sourcemap;
       isBuild = resolvedConfig.isProduction || resolvedConfig.command === 'build';
       debug('plugin config:', resolvedConfig);
     },
@@ -46,13 +47,6 @@ export default (options: VitePluginComponentImport): Plugin => {
       if (!code || !filter(id) || !needTransform(code, libs)) {
         return null;
       }
-
-      const getResult = (content: string) => {
-        return {
-          map: needSourcemap ? this.getCombinedSourcemap() : null,
-          code: content,
-        };
-      };
 
       await init;
 
@@ -104,7 +98,10 @@ export default (options: VitePluginComponentImport): Plugin => {
           str().remove(ss, endIndex);
         }
       }
-      return getResult(str().toString());
+      return {
+        map: needSourcemap ? str().generateMap({ hires: true }) : null,
+        code: str().toString(),
+      };
     },
   };
 };
