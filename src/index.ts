@@ -37,7 +37,6 @@ export default (options: VitePluginComponentImport): Plugin => {
 
   return {
     name: 'vite:style-import',
-    enforce: 'pre',
     configResolved(resolvedConfig) {
       needSourcemap = !!resolvedConfig.build.sourcemap;
       isBuild = resolvedConfig.isProduction || resolvedConfig.command === 'build';
