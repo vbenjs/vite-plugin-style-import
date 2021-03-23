@@ -1,3 +1,9 @@
+## [0.8.2](https://github.com/anncwb/vite-plugin-style-import/compare/v0.8.0...v0.8.2) (2021-03-24)
+
+### Bug Fixes
+
+- ensure the correct sourcemap,fix [#11](https://github.com/anncwb/vite-plugin-style-import/issues/11) ([a56c082](https://github.com/anncwb/vite-plugin-style-import/commit/a56c0822e7669e65bcc934e515b8c712037d2cb0))
+
 # [0.8.0](https://github.com/anncwb/vite-plugin-style-import/compare/v0.7.6...v0.8.0) (2021-03-06)
 
 ### Features
