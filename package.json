@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-style-import",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "A plug-in that imports component library styles on demand",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
