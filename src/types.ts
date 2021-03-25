@@ -28,6 +28,14 @@ export interface Lib {
    * Turning on the environment does not work
    */
   resolveComponent?: (name: string) => string;
+
+  /**
+   * https://github.com/anncwb/vite-plugin-style-import/issues/12
+   * `import ${libName} from 'xxxx';`
+   * Used for custom import name
+   */
+  transformComponentImportName?: (name: string) => string;
+
   /**
    * Customize imported component file name style conversion
    * @default: paramCase

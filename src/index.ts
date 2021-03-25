@@ -145,7 +145,12 @@ function transformComponentCss(root: string, lib: Lib, importVariables: readonly
 
 // Generate the corresponding component  string array
 function transformComponent(lib: Lib, importVariables: readonly string[]) {
-  const { libraryName, resolveComponent, libraryNameChangeCase = 'paramCase' } = lib;
+  const {
+    libraryName,
+    resolveComponent,
+    libraryNameChangeCase = 'paramCase',
+    transformComponentImportName,
+  } = lib;
   if (!resolveComponent || typeof resolveComponent !== 'function' || !libraryName) {
     return {
       componentStrList: [],
@@ -157,10 +162,16 @@ function transformComponent(lib: Lib, importVariables: readonly string[]) {
   const componentStrSet = new Set<string>();
 
   for (let index = 0; index < importVariables.length; index++) {
-    const libName = importVariables[index];
+    let libName = importVariables[index];
+
+    if (transformComponentImportName && typeof transformComponentImportName === 'function') {
+      libName = transformComponentImportName(libName) || libName;
+    }
+
     const name = getChangeCaseFileName(importVariables[index], libraryNameChangeCase);
     const importStr = resolveComponent(name);
-    componentStrSet.add(`import ${libName} from  '${importStr}';\n`);
+
+    componentStrSet.add(`import ${libName} from '${importStr}';\n`);
     componentNameSet.add(libName);
   }
   debug('import component set:', componentStrSet.toString());

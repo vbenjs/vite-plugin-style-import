@@ -155,6 +155,12 @@ export default (): UserConfigExport => {
   // 用于一些可能需要按需引入组件的情况,不单单只是引入样式(对Esm不能很好支持的库)
   // 仅在生产环境工作
   resolveComponent?: (name: string) => string;
+
+  // https://github.com/anncwb/vite-plugin-style-import/issues/12
+  // `import ${libName} from 'xxxx';`
+  // Used for custom import name
+  // 仅在生产环境工作
+  transformComponentImportName?: (name: string) => string;
 }
 
 // LibraryNameChangeCase

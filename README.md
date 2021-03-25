@@ -153,6 +153,12 @@ export default (): UserConfigExport => {
   // Used in some situations where components may need to be introduced on demand, not just to introduce styles.(Libraries that don't support Esm well)
   // Only work in production
   resolveComponent?: (name: string) => string;
+
+  // https://github.com/anncwb/vite-plugin-style-import/issues/12
+  // `import ${libName} from 'xxxx';`
+  // Used for custom import name
+  // Only work in production
+  transformComponentImportName?: (name: string) => string;
 }
 
 // LibraryNameChangeCase
