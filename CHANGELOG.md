@@ -1,3 +1,13 @@
+# [0.9.0](https://github.com/anncwb/vite-plugin-style-import/compare/v0.8.2...v0.9.0) (2021-03-26)
+
+### Bug Fixes
+
+- ensure the correct sourcemap,fix [#11](https://github.com/anncwb/vite-plugin-style-import/issues/11) ([d0a3797](https://github.com/anncwb/vite-plugin-style-import/commit/d0a3797c94a8c861600d0e93e4959fe4290cbd21))
+
+### Features
+
+- add transformComponentImportName option ([0f30d49](https://github.com/anncwb/vite-plugin-style-import/commit/0f30d495209df54d8a5b5a9b54b9aeafc6814d35))
+
 ## [0.8.2](https://github.com/anncwb/vite-plugin-style-import/compare/v0.8.0...v0.8.2) (2021-03-24)
 
 ### Bug Fixes
