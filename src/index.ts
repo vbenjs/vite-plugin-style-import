@@ -37,6 +37,7 @@ export default (options: VitePluginComponentImport): Plugin => {
 
   return {
     name: 'vite:style-import',
+    enforce: 'post',
     configResolved(resolvedConfig) {
       needSourcemap = !!resolvedConfig.build.sourcemap;
       isBuild = resolvedConfig.isProduction || resolvedConfig.command === 'build';
@@ -91,7 +92,11 @@ export default (options: VitePluginComponentImport): Plugin => {
         // TODO There may be boundary conditions. There is no semicolon ending in the code and the code is connected to one period. But such code should be very bad
         const endIndex = se + 1;
 
-        str().prependRight(endIndex, `\n${compStrList.join('')}${importCssStrList.join('')} `);
+        if (isBuild) {
+          str().prependRight(endIndex, `\n${compStrList.join('')}${importCssStrList.join('')}`);
+        } else {
+          str().append(`\n${compStrList.join('')}${importCssStrList.join('')}`);
+        }
 
         if (isResolveComponent && compNameList.some((item) => importVariables.includes(item))) {
           str().remove(ss, endIndex);
@@ -149,8 +154,8 @@ function transformComponent(lib: Lib, importVariables: readonly string[]) {
   }
 
   const componentNameSet = new Set<string>();
-
   const componentStrSet = new Set<string>();
+
   for (let index = 0; index < importVariables.length; index++) {
     const libName = importVariables[index];
     const name = getChangeCaseFileName(importVariables[index], libraryNameChangeCase);
@@ -207,7 +212,8 @@ function tryEnsureFile(root: string, filePath: string, esModule = false) {
 
 function fileExists(f: string) {
   try {
-    return fs.existsSync(f);
+    fs.accessSync(f, fs.constants.W_OK);
+    return true;
   } catch (error) {
     return false;
   }

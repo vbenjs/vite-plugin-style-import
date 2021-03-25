@@ -18,6 +18,7 @@ export default (): UserConfigExport => {
       styleImport({
         libs: [
           {
+            ensureStyleFile: true,
             libraryName: 'ant-design-vue',
             esModule: true,
             resolveStyle: (name) => {

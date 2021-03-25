@@ -7,6 +7,7 @@
       <a-col :span="12">2</a-col>
     </a-row>
 
+    <ElLink>123</ElLink>
     <TestTsx />
 
     <TestJsx />
@@ -24,12 +25,12 @@
 
   import TestTsx from './Test';
   import TestJsx from './Test1';
-  import { ElAlert } from 'element-plus';
+  import { ElAlert, ElLink } from 'element-plus';
   import { Affix, Cascader } from 'ant-design-vue';
   import { Button } from 'vant';
   export default defineComponent({
     name: 'App',
-    components: { TestTsx, TestJsx, ElAlert, Affix, Cascader, Button },
+    components: { TestTsx, ElLink, TestJsx, ElAlert, Affix, Cascader, Button },
     setup() {
       return {};
     },
