@@ -1,53 +1,55 @@
 import vitePluginComponentImport from '../src';
-import { init } from 'es-module-lexer';
 import { Lib } from '../src/types';
 
-const createVitePluginComponentImport = (libs: Lib[]) =>
-  (vitePluginComponentImport({
+const transformCodeTemplate = `import { libName } from 'lib';
+import { libName2 } from 'lib2';`;
+
+const createVitePluginComponentImport = (libs: Lib[]) => {
+  const { configResolved, transform } = vitePluginComponentImport({
     libs,
-  }) as unknown) as {
-    configResolved: (opts: { isProduction: boolean; build: Record<string, any> }) => void;
+  });
+
+  configResolved!({ isProduction: true, build: {} } as any);
+
+  return ({ transform } as unknown) as {
     transform: (
       code: string,
       id: string
-    ) => {
+    ) => Promise<{
       map: string | null;
       code: string;
-    };
+    }>;
   };
+};
 
 test('use transformComponent', async () => {
-  await init;
-
   const { transform } = createVitePluginComponentImport([
     {
       libraryName: 'lib',
-      transformComponentImportName: (name: string) => `{ ${name} }`,
+      resolveComponent: (name) => name,
+      transformComponentImportName: (name) => `{ ${name} }`,
     },
   ]);
 
-  const res = await transform(`import { libName } from 'lib'`, 'lib_path.ts');
+  const res = await transform(transformCodeTemplate, 'lib_path.ts');
 
-  expect(res).toStrictEqual({ map: null, code: "import { libName } from 'lib'\n" });
+  expect(res).toStrictEqual({
+    map: null,
+    code: `
+import { libName } from 'lib-name';\n
+import { libName2 } from 'lib2';`,
+  });
 });
 
 test('do not use transformComponent', async () => {
-  await init;
-
-  const { transform, configResolved } = createVitePluginComponentImport([
+  const { transform } = createVitePluginComponentImport([
     {
       libraryName: 'lib',
       resolveComponent: (name) => name,
     },
   ]);
 
-  configResolved({ isProduction: true, build: {} });
-
-  const res = await transform(
-    `import { libName } from 'lib';
-import { libName2 } from 'lib2';`,
-    'lib_path.ts'
-  );
+  const res = await transform(transformCodeTemplate, 'lib_path.ts');
 
   expect(res).toStrictEqual({
     map: null,
