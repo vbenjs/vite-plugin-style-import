@@ -20,6 +20,9 @@ const debug = Debug('vite-plugin-style-import');
 
 const ensureFileExts: string[] = ['.css', 'js', '.scss', '.less', '.styl'];
 
+const isFn = (value: any): value is (...args: any[]) => any =>
+  value != null && Object.prototype.toString.call(value) === '[object Function]';
+
 export default (options: VitePluginComponentImport): Plugin => {
   const {
     include = ['**/*.vue', '**/*.ts', '**/*.js', '**/*.tsx', '**/*.jsx'],
@@ -119,7 +122,7 @@ function transformComponentCss(root: string, lib: Lib, importVariables: readonly
     libraryNameChangeCase = 'paramCase',
     ensureStyleFile = false,
   } = lib;
-  if (!resolveStyle || typeof resolveStyle !== 'function' || !libraryName) {
+  if (!isFn(resolveStyle) || !libraryName) {
     return [];
   }
   const set = new Set<string>();
@@ -151,7 +154,7 @@ function transformComponent(lib: Lib, importVariables: readonly string[]) {
     libraryNameChangeCase = 'paramCase',
     transformComponentImportName,
   } = lib;
-  if (!resolveComponent || typeof resolveComponent !== 'function' || !libraryName) {
+  if (!isFn(resolveComponent) || !libraryName) {
     return {
       componentStrList: [],
       componentNameList: [],
@@ -162,16 +165,15 @@ function transformComponent(lib: Lib, importVariables: readonly string[]) {
   const componentStrSet = new Set<string>();
 
   for (let index = 0; index < importVariables.length; index++) {
-    let libName = importVariables[index];
-
-    if (transformComponentImportName && typeof transformComponentImportName === 'function') {
-      libName = transformComponentImportName(libName) || libName;
-    }
+    const libName = importVariables[index];
 
     const name = getChangeCaseFileName(importVariables[index], libraryNameChangeCase);
     const importStr = resolveComponent(name);
 
-    componentStrSet.add(`import ${libName} from '${importStr}';\n`);
+    const importLibName =
+      (isFn(transformComponentImportName) && transformComponentImportName(libName)) || libName;
+
+    componentStrSet.add(`import ${importLibName} from '${importStr}';\n`);
     componentNameSet.add(libName);
   }
   debug('import component set:', componentStrSet.toString());
