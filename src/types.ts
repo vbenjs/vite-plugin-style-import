@@ -13,7 +13,7 @@ export interface Lib {
   /**
    * Custom imported component style conversion
    */
-  resolveStyle: (name: string) => string;
+  resolveStyle?: (name: string) => string;
 
   /**
    * There may be some component libraries that are not very standardized.
