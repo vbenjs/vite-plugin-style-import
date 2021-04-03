@@ -1,3 +1,5 @@
+## [0.9.2](https://github.com/anncwb/vite-plugin-style-import/compare/v0.9.0...v0.9.2) (2021-04-03)
+
 ## [0.9.1](https://github.com/anncwb/vite-plugin-style-import/compare/v0.9.0...v0.9.1) (2021-03-28)
 
 # [0.9.0](https://github.com/anncwb/vite-plugin-style-import/compare/v0.8.2...v0.9.0) (2021-03-26)
