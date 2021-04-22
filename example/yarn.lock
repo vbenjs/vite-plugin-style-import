@@ -335,6 +335,13 @@
   resolved "https://registry.npmjs.org/@types/lodash/-/lodash-4.14.167.tgz#ce7d78553e3c886d4ea643c37ec7edc20f16765e"
   integrity sha512-w7tQPjARrvdeBkX/Rwg95S592JwxqOjmms3zWQ0XZgSyxSLdzWaYH3vErBhdVS/lRBX7F8aBYcYJYTr5TMGOzw==
 
+"@types/rollup@^0.54.0":
+  version "0.54.0"
+  resolved "https://registry.npmjs.org/@types/rollup/-/rollup-0.54.0.tgz#e3ab3a7b3c1bf92969602dd92a589de39f324a31"
+  integrity sha512-oeYztLHhQ98jnr+u2cs1c3tHOGtpzrm9DJlIdEjznwoXWidUbrI+X6ib7zCkPIbB7eJ7VbbKNQ5n/bPnSg6Naw==
+  dependencies:
+    rollup "*"
+
 "@vant/icons@^1.5.3":
   version "1.5.3"
   resolved "https://registry.npmjs.org/@vant/icons/-/icons-1.5.3.tgz#b7779f67bf608d417a82452fbede406dfa46b439"
@@ -1228,6 +1235,13 @@ resolve@^1.19.0:
   dependencies:
     is-core-module "^2.1.0"
     path-parse "^1.0.6"
+
+rollup@*:
+  version "2.45.2"
+  resolved "https://registry.npmjs.org/rollup/-/rollup-2.45.2.tgz#8fb85917c9f35605720e92328f3ccbfba6f78b48"
+  integrity sha512-kRRU7wXzFHUzBIv0GfoFFIN3m9oteY4uAsKllIpQDId5cfnkWF2J130l+27dzDju0E6MScKiV0ZM5Bw8m4blYQ==
+  optionalDependencies:
+    fsevents "~2.3.1"
 
 rollup@^2.38.5:
   version "2.39.0"

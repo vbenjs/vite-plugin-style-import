@@ -12,6 +12,7 @@ export default (): UserConfigExport => {
         },
       },
     },
+
     plugins: [
       vue(),
       jsx(),
@@ -33,8 +34,9 @@ export default (): UserConfigExport => {
             },
           },
           {
-            importTest: /^El.*/,
             libraryName: 'element-plus',
+            ensureStyleFile: true,
+            esModule: true,
             resolveStyle: (name) => {
               return `element-plus/lib/theme-chalk/${name}.css`;
             },

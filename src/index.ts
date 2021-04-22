@@ -1,4 +1,5 @@
 import type { Plugin } from 'vite';
+import type { ExternalOption } from 'rollup';
 
 import type {
   ChangeCaseType,
@@ -12,14 +13,19 @@ import * as changeCase from 'change-case';
 import { init, parse, ImportSpecifier } from 'es-module-lexer';
 import MagicString from 'magic-string';
 import path from 'path';
-import { normalizePath } from 'vite';
 import { debug as Debug } from 'debug';
-import fs from 'fs';
+import {
+  fileExists,
+  isRegExp,
+  // judgeResultFun,
+  resolveNodeModules,
+} from './utils';
 
 const debug = Debug('vite-plugin-style-import');
 
 const ensureFileExts: string[] = ['.css', 'js', '.scss', '.less', '.styl'];
 
+const asRE = /\s+as\s+\w+,?/g;
 const isFn = (value: any): value is (...args: any[]) => any =>
   value != null && Object.prototype.toString.call(value) === '[object Function]';
 
@@ -35,6 +41,7 @@ export default (options: VitePluginComponentImport): Plugin => {
 
   let needSourcemap = false;
   let isBuild = false;
+  let external: ExternalOption | undefined;
 
   debug('plugin options:', options);
 
@@ -44,6 +51,7 @@ export default (options: VitePluginComponentImport): Plugin => {
     configResolved(resolvedConfig) {
       needSourcemap = !!resolvedConfig.build.sourcemap;
       isBuild = resolvedConfig.isProduction || resolvedConfig.command === 'build';
+      external = resolvedConfig?.build?.rollupOptions?.external ?? undefined;
       debug('plugin config:', resolvedConfig);
     },
     async transform(code, id) {
@@ -71,7 +79,7 @@ export default (options: VitePluginComponentImport): Plugin => {
         const { n, se, ss } = imports[index];
         if (!n) continue;
 
-        const lib = getLib(n, libs);
+        const lib = getLib(n, libs, external);
         if (!lib) continue;
 
         const isResolveComponent = isBuild && !!lib.resolveComponent;
@@ -104,6 +112,13 @@ export default (options: VitePluginComponentImport): Plugin => {
 
         if (isResolveComponent && compNameList.some((item) => importVariables.includes(item))) {
           str().remove(ss, endIndex);
+          // let importStr = str().slice(ss, endIndex);
+          // const { same, overwriteStr } = await removeAlreadyName(importStr, compNameList);
+          // if (same) {
+          //   str().remove(ss, endIndex);
+          // } else {
+          //   str().overwrite(ss, endIndex, overwriteStr);
+          // }
         }
       }
       return {
@@ -118,9 +133,21 @@ function filterImportVariables(importVars: readonly string[], reg?: RegExp) {
   if (!reg) {
     return importVars;
   }
-
   return importVars.filter((item) => reg.test(item));
 }
+
+// async function removeAlreadyName(importStr: string, compNameList: string[]) {
+//   const exportStr = importStr.replace('import', 'export').replace(asRE, ',');
+//   const same = judgeResultFun(parse(exportStr)[1], compNameList);
+//   let overwriteStr = importStr.replace(asRE, ',');
+//   if (!same) {
+//     compNameList.forEach((comp) => {
+//       overwriteStr = overwriteStr.replace(new RegExp(`${comp}\s*,?`), '');
+//     });
+//   }
+
+//   return { same, overwriteStr };
+// }
 
 // Generate the corresponding component css string array
 function transformComponentCss(root: string, lib: Lib, importVariables: readonly string[]) {
@@ -139,6 +166,9 @@ function transformComponentCss(root: string, lib: Lib, importVariables: readonly
     const name = getChangeCaseFileName(importVariables[index], libraryNameChangeCase);
 
     let importStr = resolveStyle(name);
+    if (!importStr) {
+      continue;
+    }
     if (esModule) {
       importStr = resolveNodeModules(root, importStr);
     }
@@ -198,7 +228,7 @@ export function transformImportVar(importStr: string) {
     return [];
   }
 
-  const exportStr = importStr.replace('import', 'export').replace(/\s+as\s+\w+,?/g, ',');
+  const exportStr = importStr.replace('import', 'export').replace(asRE, ',');
   let importVariables: readonly string[] = [];
   try {
     importVariables = parse(exportStr)[1];
@@ -232,17 +262,27 @@ function tryEnsureFile(root: string, filePath: string, esModule = false) {
   return filePathList.some((item) => fileExists(item));
 }
 
-function fileExists(f: string) {
-  try {
-    fs.accessSync(f, fs.constants.W_OK);
-    return true;
-  } catch (error) {
-    return false;
+function getLib(libraryName: string, libs: Lib[], external?: ExternalOption) {
+  let libList = libs;
+  if (external) {
+    const isString = typeof external === 'string';
+    const isRE = isRegExp(external);
+    if (isString) {
+      libList = libList.filter((item) => item.libraryName !== external);
+    } else if (isRE) {
+      libList = libList.filter((item) => !(external as RegExp).test(item.libraryName));
+    } else if (Array.isArray(external)) {
+      libList = libList.filter((item) => {
+        return !external.some((val) => {
+          if (typeof val === 'string') {
+            return val === item.libraryName;
+          }
+          return (val as RegExp).test(item.libraryName);
+        });
+      });
+    }
   }
-}
-
-function getLib(libraryName: string, libs: Lib[]) {
-  return libs.find((item) => item.libraryName === libraryName);
+  return libList.find((item) => item.libraryName === libraryName);
 }
 
 // File name conversion style
@@ -262,8 +302,4 @@ function needTransform(code: string, libs: Lib[]) {
   return !libs.every(({ libraryName }) => {
     return !new RegExp(`('${libraryName}')|("${libraryName}")`).test(code);
   });
-}
-
-function resolveNodeModules(root: string, ...dir: string[]) {
-  return normalizePath(path.join(root, 'node_modules', ...dir));
 }

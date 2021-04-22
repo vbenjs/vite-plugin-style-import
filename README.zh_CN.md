@@ -99,7 +99,6 @@ export default (): UserConfigExport => {
             },
           },
           {
-            importTest: /^El.*/,
             libraryName: 'element-plus',
             resolveStyle: (name) => {
               return `element-plus/lib/theme-chalk/${name}.css`;
