@@ -1,6 +1,7 @@
 export type RegOptions = string | RegExp | (string | RegExp)[] | null | undefined;
 
 export interface Lib {
+  importTest?: RegExp;
   /**
    * Dependent library name
    */

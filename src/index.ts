@@ -77,7 +77,8 @@ export default (options: VitePluginComponentImport): Plugin => {
         const isResolveComponent = isBuild && !!lib.resolveComponent;
 
         const importStr = code.slice(ss, se);
-        const importVariables = transformImportVar(importStr);
+        let importVariables = transformImportVar(importStr);
+        importVariables = filterImportVariables(importVariables, lib.importTest);
         const importCssStrList = transformComponentCss(root, lib, importVariables);
 
         let compStrList: string[] = [];
@@ -112,6 +113,14 @@ export default (options: VitePluginComponentImport): Plugin => {
     },
   };
 };
+
+function filterImportVariables(importVars: readonly string[], reg?: RegExp) {
+  if (!reg) {
+    return importVars;
+  }
+
+  return importVars.filter((item) => reg.test(item));
+}
 
 // Generate the corresponding component css string array
 function transformComponentCss(root: string, lib: Lib, importVariables: readonly string[]) {

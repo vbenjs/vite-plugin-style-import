@@ -99,6 +99,7 @@ export default (): UserConfigExport => {
             },
           },
           {
+            importTest: /^El.*/,
             libraryName: 'element-plus',
             resolveStyle: (name) => {
               return `element-plus/lib/theme-chalk/${name}.css`;
@@ -127,6 +128,9 @@ export default (): UserConfigExport => {
 
 ```ts
 {
+  // Import names that meet this rule will take effect. The default is null, which can be applied to resolveComponent and resolveStyle at the same time
+  importTest?: Regexp;
+
   // Need to imported  library name
   libraryName: string;
 

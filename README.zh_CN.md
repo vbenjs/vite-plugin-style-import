@@ -99,6 +99,7 @@ export default (): UserConfigExport => {
             },
           },
           {
+            importTest: /^El.*/,
             libraryName: 'element-plus',
             resolveStyle: (name) => {
               return `element-plus/lib/theme-chalk/${name}.css`;
@@ -127,6 +128,8 @@ export default (): UserConfigExport => {
 
 ```ts
 {
+  // 符合该规则的导入名字才会生效，默认null，可以同时应用于resolveComponent和resolveStyle
+  importTest?: Regexp;
   // 需要导入的库名
   libraryName: string;
 
