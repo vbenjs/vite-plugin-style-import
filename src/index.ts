@@ -1,12 +1,7 @@
 import type { Plugin } from 'vite';
 import type { ExternalOption } from 'rollup';
 
-import type {
-  ChangeCaseType,
-  VitePluginComponentImport,
-  LibraryNameChangeCase,
-  Lib,
-} from './types';
+import type { ChangeCaseType, VitePluginOptions, LibraryNameChangeCase, Lib } from './types';
 
 import { createFilter } from '@rollup/pluginutils';
 import * as changeCase from 'change-case';
@@ -29,7 +24,9 @@ const asRE = /\s+as\s+\w+,?/g;
 const isFn = (value: any): value is (...args: any[]) => any =>
   value != null && Object.prototype.toString.call(value) === '[object Function]';
 
-export default (options: VitePluginComponentImport): Plugin => {
+export * from './types';
+
+export default (options: VitePluginOptions): Plugin => {
   const {
     include = ['**/*.vue', '**/*.ts', '**/*.js', '**/*.tsx', '**/*.jsx'],
     exclude = 'node_modules/**',

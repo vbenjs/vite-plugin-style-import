@@ -44,7 +44,7 @@ export interface Lib {
   libraryNameChangeCase?: LibraryNameChangeCase;
 }
 
-export interface VitePluginComponentImport {
+export interface VitePluginOptions {
   include?: RegOptions;
   exclude?: RegOptions;
   /**
