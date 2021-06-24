@@ -6,6 +6,16 @@ export function resolveNodeModules(root: string, ...dir: string[]) {
   return normalizePath(path.join(root, 'node_modules', ...dir));
 }
 
+export function resolvePnp(module: string) {
+  try {
+    return normalizePath(require.resolve(module));
+  } catch (error) {
+    return '';
+  }
+}
+
+export const isPnp = !!process.versions.pnp;
+
 export function isRegExp(value: unknown) {
   return Object.prototype.toString.call(value) === '[object RegExp]';
 }

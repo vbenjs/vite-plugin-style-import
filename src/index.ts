@@ -11,14 +11,16 @@ import path from 'path';
 import { debug as Debug } from 'debug';
 import {
   fileExists,
+  isPnp,
   isRegExp,
   // judgeResultFun,
   resolveNodeModules,
+  resolvePnp,
 } from './utils';
 
 const debug = Debug('vite-plugin-style-import');
 
-const ensureFileExts: string[] = ['.css', 'js', '.scss', '.less', '.styl'];
+const ensureFileExts: string[] = ['.css', '.js', '.scss', '.less', '.styl'];
 
 const asRE = /\s+as\s+\w+,?/g;
 const isFn = (value: any): value is (...args: any[]) => any =>
@@ -166,16 +168,21 @@ function transformComponentCss(root: string, lib: Lib, importVariables: readonly
     if (!importStr) {
       continue;
     }
-    if (esModule) {
-      importStr = resolveNodeModules(root, importStr);
-    }
 
     let isAdd = true;
 
-    if (ensureStyleFile) {
-      isAdd = ensureFileExists(root, importStr, esModule);
-    }
+    if (isPnp) {
+      importStr = resolvePnp(importStr);
+      isAdd = !!importStr;
+    } else {
+      if (esModule) {
+        importStr = resolveNodeModules(root, importStr);
+      }
 
+      if (ensureStyleFile) {
+        isAdd = ensureFileExists(root, importStr, esModule);
+      }
+    }
     isAdd && set.add(`import '${importStr}';\n`);
   }
   debug('import css sets:', set.toString());
