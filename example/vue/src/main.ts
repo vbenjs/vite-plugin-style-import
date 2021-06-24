@@ -16,6 +16,8 @@ const app = createApp(App);
 
 app.use(Button).use(Row).use(Col).use(ElButton);
 
+// eslint-disable-next-line no-console
 console.log(locale);
+// eslint-disable-next-line no-console
 console.log(AntButton);
 app.mount('#app');
