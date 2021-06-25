@@ -1,22 +1,13 @@
 import type { Plugin } from 'vite';
 import type { ExternalOption } from 'rollup';
-
 import type { ChangeCaseType, VitePluginOptions, LibraryNameChangeCase, Lib } from './types';
-
 import { createFilter } from '@rollup/pluginutils';
 import * as changeCase from 'change-case';
 import { init, parse, ImportSpecifier } from 'es-module-lexer';
 import MagicString from 'magic-string';
 import path from 'path';
 import { debug as Debug } from 'debug';
-import {
-  fileExists,
-  isPnp,
-  isRegExp,
-  // judgeResultFun,
-  resolveNodeModules,
-  resolvePnp,
-} from './utils';
+import { fileExists, isPnp, isRegExp, resolveNodeModules, resolvePnp } from './utils';
 
 const debug = Debug('vite-plugin-style-import');
 
