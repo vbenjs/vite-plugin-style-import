@@ -94,11 +94,11 @@ export default (options: VitePluginOptions): Plugin => {
         // TODO There may be boundary conditions. There is no semicolon ending in the code and the code is connected to one period. But such code should be very bad
         const endIndex = se + 1;
 
-        if (isBuild) {
-          str().prependRight(endIndex, `\n${compStrList.join('')}${importCssStrList.join('')}`);
-        } else {
-          str().append(`\n${compStrList.join('')}${importCssStrList.join('')}`);
-        }
+        // if (isBuild) {
+        str().prependRight(endIndex, `\n${compStrList.join('')}${importCssStrList.join('')}`);
+        // } else {
+        //   str().append(`\n${compStrList.join('')}${importCssStrList.join('')}`);
+        // }
 
         if (isResolveComponent && compNameList.some((item) => importVariables.includes(item))) {
           str().remove(ss, endIndex);
