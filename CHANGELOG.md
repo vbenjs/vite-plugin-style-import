@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/anncwb/vite-plugin-style-import/compare/v1.0.1...v1.1.0) (2021-08-02)
+
+### Bug Fixes
+
+- ensure local and production is consistent,fix [#27](https://github.com/anncwb/vite-plugin-style-import/issues/27) ([896a6fb](https://github.com/anncwb/vite-plugin-style-import/commit/896a6fb5e6eb5d8bbfd69f7ccf1be3c5e945763c))
+- ensure that the specified dependencies are correct ([8b6e21f](https://github.com/anncwb/vite-plugin-style-import/commit/8b6e21fe2b78eb3de9be925d15d3ea8cb5833715))
+
 ## [1.0.1](https://github.com/anncwb/vite-plugin-style-import/compare/v0.9.2...v1.0.1) (2021-06-25)
 
 ### Bug Fixes
