@@ -100,6 +100,7 @@ export default (): UserConfigExport => {
           },
           {
             libraryName: 'element-plus',
+            base: true,
             resolveStyle: (name) => {
               return `element-plus/lib/theme-chalk/${name}.css`;
             },
