@@ -6,6 +6,7 @@ import * as changeCase from 'change-case';
 import { init, parse, ImportSpecifier } from 'es-module-lexer';
 import MagicString from 'magic-string';
 import path from 'path';
+import fs from 'fs';
 import { debug as Debug } from 'debug';
 import { fileExists, isPnp, isRegExp, resolveNodeModules, resolvePnp } from './utils';
 
@@ -91,25 +92,47 @@ export default (options: VitePluginOptions): Plugin => {
         debug('prepend import css str:', importCssStrList.join(''));
         debug('prepend import component str:', compStrList.join(''));
 
+        const { base = '' } = lib;
+
+        let baseImporter = base ? '\n' + `import '${base}'` : '';
+
+        if (str().toString().includes(base)) {
+          baseImporter = '';
+        }
+
         // TODO There may be boundary conditions. There is no semicolon ending in the code and the code is connected to one period. But such code should be very bad
         const endIndex = se + 1;
-
         // if (isBuild) {
-        str().prependRight(endIndex, `\n${compStrList.join('')}${importCssStrList.join('')}`);
+
         // } else {
         //   str().append(`\n${compStrList.join('')}${importCssStrList.join('')}`);
         // }
 
         if (isResolveComponent && compNameList.some((item) => importVariables.includes(item))) {
-          str().remove(ss, endIndex);
-          // let importStr = str().slice(ss, endIndex);
-          // const { same, overwriteStr } = await removeAlreadyName(importStr, compNameList);
-          // if (same) {
-          //   str().remove(ss, endIndex);
-          // } else {
-          //   str().overwrite(ss, endIndex, overwriteStr);
-          // }
+          // TODO  Special treatment element plus
+          if (lib.libraryName === 'element-plus') {
+            str().remove(ss, endIndex);
+          } else {
+            const importStr = str().slice(ss, endIndex);
+            const [resultStr, uncssList] = await removeAlreadyName(root, importStr, lib);
+            if (resultStr) {
+              str().overwrite(ss, endIndex, resultStr);
+            } else {
+              str().remove(ss, endIndex);
+            }
+
+            if (uncssList.length) {
+              compStrList = compStrList.filter(
+                (item) => !uncssList.some((imp) => item.startsWith(`import ${imp}`))
+              );
+            }
+          }
         }
+
+        str().prependRight(
+          endIndex,
+          `${baseImporter}\n${compStrList.join('')}${importCssStrList.join('')}`
+        );
       }
       return {
         map: needSourcemap ? str().generateMap({ hires: true }) : null,
@@ -126,18 +149,40 @@ function filterImportVariables(importVars: readonly string[], reg?: RegExp) {
   return importVars.filter((item) => reg.test(item));
 }
 
-// async function removeAlreadyName(importStr: string, compNameList: string[]) {
-//   const exportStr = importStr.replace('import', 'export').replace(asRE, ',');
-//   const same = judgeResultFun(parse(exportStr)[1], compNameList);
-//   let overwriteStr = importStr.replace(asRE, ',');
-//   if (!same) {
-//     compNameList.forEach((comp) => {
-//       overwriteStr = overwriteStr.replace(new RegExp(`${comp}\s*,?`), '');
-//     });
-//   }
+async function removeAlreadyName(
+  root: string,
+  importStr: string,
+  lib: Lib
+): Promise<[string, string[]]> {
+  let result = importStr;
+  const { libraryNameChangeCase = 'paramCase', resolveStyle } = lib;
+  const exportStr = importStr.replace(asRE, ',').replace('import', 'export').replace(asRE, ',');
+  await init;
+  const importComponents = parse(exportStr)[1];
 
-//   return { same, overwriteStr };
-// }
+  const hasCssList: string[] = [];
+  const unCssList: string[] = [];
+  importComponents.filter((comp) => {
+    const name = getChangeCaseFileName(comp, libraryNameChangeCase);
+    const importStr = resolveStyle?.(name);
+    const cssFile = resolveNodeModules(root, importStr!);
+
+    if (fs.existsSync(cssFile)) {
+      hasCssList.push(comp);
+    } else {
+      unCssList.push(comp);
+    }
+  });
+
+  hasCssList.forEach((item) => {
+    result = result.replace(new RegExp(`\\s?${item}\\s?,?`), '');
+  });
+
+  if (parse(result.replace('import', 'export'))[1].length === 0) {
+    result = '';
+  }
+  return [result, unCssList];
+}
 
 // Generate the corresponding component css string array
 function transformComponentCss(root: string, lib: Lib, importVariables: readonly string[]) {

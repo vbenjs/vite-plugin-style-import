@@ -2,7 +2,7 @@ import { createApp } from 'vue';
 import App from './App.vue';
 
 import { Button, Row, Col } from 'ant-design-vue';
-import { ElButton, locale } from 'element-plus';
+import { ElButton, locale, ElMessage } from 'element-plus';
 
 import {
   // Need
@@ -21,3 +21,5 @@ console.log(locale);
 // eslint-disable-next-line no-console
 console.log(AntButton);
 app.mount('#app');
+
+ElMessage.error('测试');

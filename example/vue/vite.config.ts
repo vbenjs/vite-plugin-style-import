@@ -43,6 +43,7 @@ export default (): UserConfigExport => {
             resolveComponent: (name) => {
               return `element-plus/lib/${name}`;
             },
+            base: 'element-plus/lib/theme-chalk/base.css',
           },
         ],
       }),

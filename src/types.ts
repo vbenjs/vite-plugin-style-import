@@ -42,6 +42,11 @@ export interface Lib {
    * @default: paramCase
    */
   libraryNameChangeCase?: LibraryNameChangeCase;
+
+  /**
+   * Whether to introduce base style
+   */
+  base?: string;
 }
 
 export interface VitePluginOptions {
