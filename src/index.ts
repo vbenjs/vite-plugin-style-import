@@ -165,10 +165,13 @@ async function removeAlreadyName(
   importComponents.filter((comp) => {
     const name = getChangeCaseFileName(comp, libraryNameChangeCase);
     const importStr = resolveStyle?.(name);
-    const cssFile = resolveNodeModules(root, importStr!);
-
-    if (fs.existsSync(cssFile)) {
-      hasCssList.push(comp);
+    if (importStr) {
+      const cssFile = resolveNodeModules(root, importStr!);
+      if (fs.existsSync(cssFile)) {
+        hasCssList.push(comp);
+      } else {
+        unCssList.push(comp);
+      }
     } else {
       unCssList.push(comp);
     }
@@ -322,6 +325,7 @@ function getLib(libraryName: string, libs: Lib[], external?: ExternalOption) {
       });
     }
   }
+  
   return libList.find((item) => item.libraryName === libraryName);
 }
 
