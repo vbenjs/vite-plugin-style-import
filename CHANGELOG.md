@@ -1,3 +1,21 @@
+# [1.2.0](https://github.com/anncwb/vite-plugin-style-import/compare/v0.9.2...v1.2.0) (2021-08-23)
+
+### Bug Fixes
+
+- ensure local and production is consistent,fix [#27](https://github.com/anncwb/vite-plugin-style-import/issues/27) ([896a6fb](https://github.com/anncwb/vite-plugin-style-import/commit/896a6fb5e6eb5d8bbfd69f7ccf1be3c5e945763c))
+- ensure that the specified dependencies are correct ([75a8969](https://github.com/anncwb/vite-plugin-style-import/commit/75a89698698dff4714ec1db0c7471c8a67acec99))
+- suppopt external,fix [#15](https://github.com/anncwb/vite-plugin-style-import/issues/15) ([2a1802f](https://github.com/anncwb/vite-plugin-style-import/commit/2a1802f2adeb59eba62f14970e795e4563f359aa))
+
+### Features
+
+- support monorepo ([ee61e1d](https://github.com/anncwb/vite-plugin-style-import/commit/ee61e1deec19e54524f19bd4ad2a6369e1337991))
+- **pnp:** compatible with yarn2 pnp ([#23](https://github.com/anncwb/vite-plugin-style-import/issues/23)) ([d1e9740](https://github.com/anncwb/vite-plugin-style-import/commit/d1e974043a420f209c8c80d5e7a08007763300b8))
+- add importTest, fix,[#16](https://github.com/anncwb/vite-plugin-style-import/issues/16) ([755bc9a](https://github.com/anncwb/vite-plugin-style-import/commit/755bc9a3c632e6ab57361d2f1aa1ba6b01faf704))
+
+### Performance Improvements
+
+- expose type VitePluginOptions, fix [#19](https://github.com/anncwb/vite-plugin-style-import/issues/19) ([013dc29](https://github.com/anncwb/vite-plugin-style-import/commit/013dc2978ed6a3e4d66e1453056c93c39a22b6ea))
+
 # [1.1.0](https://github.com/anncwb/vite-plugin-style-import/compare/v1.0.1...v1.1.0) (2021-08-02)
 
 ### Bug Fixes

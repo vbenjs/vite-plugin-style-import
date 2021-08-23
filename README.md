@@ -60,8 +60,8 @@ import 'element-plus/lib/theme-chalk/el-button.css';
 - Config plugin in vite.config.ts
 
 ```ts
-import { UserConfigExport } from 'vite';
-import styleImport from 'vite-plugin-style-import';
+import { UserConfigExport } from 'vite'
+import styleImport from 'vite-plugin-style-import'
 
 export default (): UserConfigExport => {
   return {
@@ -81,48 +81,47 @@ export default (): UserConfigExport => {
             libraryName: 'ant-design-vue',
             esModule: true,
             resolveStyle: (name) => {
-              return `ant-design-vue/es/${name}/style/index`;
+              return `ant-design-vue/es/${name}/style/index`
             },
           },
           {
             libraryName: 'antd',
             esModule: true,
             resolveStyle: (name) => {
-              return `antd/es/${name}/style/index`;
+              return `antd/es/${name}/style/index`
             },
           },
           {
             libraryName: 'vant',
             esModule: true,
             resolveStyle: (name) => {
-              return `vant/es/${name}/style`;
+              return `vant/es/${name}/style`
             },
           },
           {
             libraryName: 'element-plus',
-            base: true,
+            base: 'element-plus/lib/theme-chalk/base.css',
             resolveStyle: (name) => {
-              return `element-plus/lib/theme-chalk/${name}.css`;
+              return `element-plus/lib/theme-chalk/${name}.css`
             },
             resolveComponent: (name) => {
-              return `element-plus/lib/${name}`;
+              return `element-plus/lib/${name}`
             },
           },
         ],
       }),
     ],
-  };
-};
+  }
+}
 ```
 
 ### Options
 
-| param | type | default | description |
-| --- | --- | --- | --- |
+| param   | type                                                  | default                                          | description                                    |
+| ------- | ----------------------------------------------------- | ------------------------------------------------ | ---------------------------------------------- |
 | include | `string、RegExp、(string、RegExp)[]、null、undefined` | `['**/*.js', '**/*.ts', '**/*.tsx', '**/*.jsx']` | Code directory and file format to be converted |
-| exclude | `string、RegExp、(string、RegExp)[]、null、undefined` | `'node_modules/**'` | Excluded files/folders |
-| libs | `Lib[]` |  | List of libraries to be imported |
-| root | `string` | `process.cwd()` | Depends on the root directory, if it is a monorepo project, you need to set it manually |
+| exclude | `string、RegExp、(string、RegExp)[]、null、undefined` | `'node_modules/**'`                              | Excluded files/folders                         |
+| libs    | `Lib[]`                                               |                                                  | List of libraries to be imported               |
 
 **Lib**
 
