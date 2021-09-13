@@ -3,7 +3,7 @@ import { normalizePath } from 'vite'
 import fs from 'fs'
 
 export function resolveNodeModules(libName: string, ...dir: string[]) {
-  const modulePath = require.resolve(libName)
+  const modulePath = normalizePath(require.resolve(libName))
   const lastIndex = modulePath.indexOf(libName)
 
   return normalizePath(path.resolve(modulePath.substring(0, lastIndex), ...dir))
