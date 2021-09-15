@@ -8,7 +8,7 @@ import MagicString from 'magic-string'
 import path from 'path'
 import fs from 'fs'
 import { debug as Debug } from 'debug'
-import { fileExists, isPnp, isRegExp, resolveNodeModules, resolvePnp } from './utils'
+import { patchPnpm, fileExists, isPnp, isRegExp, resolveNodeModules, resolvePnp } from './utils'
 
 const debug = Debug('vite-plugin-style-import')
 
@@ -77,7 +77,8 @@ export default (options: VitePluginOptions): Plugin => {
         const importStr = code.slice(ss, se)
         let importVariables = transformImportVar(importStr)
         importVariables = filterImportVariables(importVariables, lib.importTest)
-        const importCssStrList = await transformComponentCss(lib, importVariables)
+        let importCssStrList = await transformComponentCss(lib, importVariables)
+        importCssStrList = importCssStrList.map((cssStr) => patchPnpm(cssStr))
 
         let compStrList: string[] = []
         let compNameList: string[] = []
@@ -217,6 +218,7 @@ async function transformComponentCss(lib: Lib, importVariables: readonly string[
         isAdd = ensureFileExists(libraryName, importStr, esModule)
       }
     }
+
     isAdd && set.add(`import '${importStr}';\n`)
   }
   debug('import css sets:', set.toString())
@@ -280,6 +282,7 @@ export function transformImportVar(importStr: string) {
 // Make sure the file exists
 // Prevent errors when importing non-existent css files
 function ensureFileExists(libraryName: string, importStr: string, esModule = false) {
+  importStr = patchPnpm(importStr)
   const extName = path.extname(importStr)
   if (!extName) {
     return tryEnsureFile(libraryName, importStr, esModule)
@@ -295,7 +298,6 @@ function ensureFileExists(libraryName: string, importStr: string, esModule = fal
 function tryEnsureFile(libraryName: string, filePath: string, esModule = false) {
   const filePathList = ensureFileExts.map((item) => {
     const p = `${filePath}${item}`
-
     return esModule ? p : resolveNodeModules(libraryName, p)
   })
   return filePathList.some((item) => fileExists(item))

@@ -45,3 +45,13 @@ export function fileExists(f: string) {
     return false
   }
 }
+
+export const patchPnpm = (str: string): string => {
+  const PNPM_REG = /\.pnpm\//gi
+  if (PNPM_REG.test(str)) {
+    // eslint-disable-next-line no-console
+    console.log('pnpm package manager detected')
+    str = str.replace(PNPM_REG, '')
+  }
+  return str
+}

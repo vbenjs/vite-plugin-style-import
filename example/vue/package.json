@@ -2,7 +2,7 @@
   "name": "ts-example",
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
+    "dev": "cross-env DEBUG=vite-plugin-style-import vite",
     "build": "vite build "
   },
   "dependencies": {
