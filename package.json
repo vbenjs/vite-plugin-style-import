@@ -3,7 +3,10 @@
   "version": "1.2.1",
   "description": "A plug-in that imports component library styles on demand",
   "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "exports": {
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.js"
+  },
   "types": "dist/index.d.ts",
   "license": "MIT",
   "author": "Vben",
