@@ -7,7 +7,7 @@ import { init, parse, ImportSpecifier } from 'es-module-lexer'
 import MagicString from 'magic-string'
 import path from 'path'
 import fs from 'fs'
-import { debug as Debug } from 'debug'
+import Debug from 'debug'
 import { fileExists, isPnp, isRegExp, resolveNodeModules, resolvePnp } from './utils'
 
 const debug = Debug('vite-plugin-style-import')
