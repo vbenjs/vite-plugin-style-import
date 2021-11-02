@@ -108,6 +108,13 @@ export default (): UserConfigExport => {
               return `element-plus/lib/${name}`
             },
           },
+          {
+            libraryName: '@nutui/nutui',
+            libraryNameChangeCase: 'pascalCase',
+            resolveStyle: (name) => {
+              return `@nutui/nutui/dist/packages/${name}/index.scss`
+            }
+          }
         ],
       }),
     ],
