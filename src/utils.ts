@@ -4,7 +4,8 @@ import fs from 'fs'
 
 export function resolveNodeModules(libName: string, ...dir: string[]) {
   const modulePath = normalizePath(require.resolve(libName))
-  const lastIndex = modulePath.indexOf(libName)
+
+  const lastIndex = modulePath.lastIndexOf(libName)
 
   return normalizePath(path.resolve(modulePath.substring(0, lastIndex), ...dir))
 }

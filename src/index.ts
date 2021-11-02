@@ -75,8 +75,11 @@ export default (options: VitePluginOptions): Plugin => {
         const isResolveComponent = isBuild && !!lib.resolveComponent
 
         const importStr = code.slice(ss, se)
+
         let importVariables = transformImportVar(importStr)
+
         importVariables = filterImportVariables(importVariables, lib.importTest)
+
         const importCssStrList = await transformComponentCss(lib, importVariables)
 
         let compStrList: string[] = []
@@ -133,6 +136,7 @@ export default (options: VitePluginOptions): Plugin => {
           `${baseImporter}\n${compStrList.join('')}${importCssStrList.join('')}`,
         )
       }
+
       return {
         map: needSourcemap ? str().generateMap({ hires: true }) : null,
         code: str().toString(),
@@ -191,6 +195,7 @@ async function transformComponentCss(lib: Lib, importVariables: readonly string[
     libraryNameChangeCase = 'paramCase',
     ensureStyleFile = false,
   } = lib
+
   if (!isFn(resolveStyle) || !libraryName) {
     return []
   }
@@ -199,6 +204,7 @@ async function transformComponentCss(lib: Lib, importVariables: readonly string[
     const name = getChangeCaseFileName(importVariables[index], libraryNameChangeCase)
 
     let importStr = resolveStyle(name)
+
     if (!importStr) {
       continue
     }
@@ -217,8 +223,10 @@ async function transformComponentCss(lib: Lib, importVariables: readonly string[
         isAdd = ensureFileExists(libraryName, importStr, esModule)
       }
     }
+
     isAdd && set.add(`import '${importStr}';\n`)
   }
+
   debug('import css sets:', set.toString())
   return Array.from(set)
 }
