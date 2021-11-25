@@ -71,8 +71,8 @@ import styleImport, {
 
 export default (): UserConfigExport => {
   return {
-    // 1. 如果使用的是ant-design 系列的 需要配置这个
-    // 2. 确保less安装在依赖 `yarn add less -D`
+    // 1. If you are using the ant-design series, you need to configure this
+    // 2. Make sure less is installed in the dependency `yarn add less -D`
     css: {
       preprocessorOptions: {
         less: {
