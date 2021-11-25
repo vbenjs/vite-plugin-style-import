@@ -1,3 +1,16 @@
+# [1.3.0](https://github.com/anncwb/vite-plugin-style-import/compare/v1.0.1...v1.3.0) (2021-11-25)
+
+### Bug Fixes
+
+- ensure local and production is consistent,fix [#27](https://github.com/anncwb/vite-plugin-style-import/issues/27) ([896a6fb](https://github.com/anncwb/vite-plugin-style-import/commit/896a6fb5e6eb5d8bbfd69f7ccf1be3c5e945763c))
+- ensure that the specified dependencies are correct ([75a8969](https://github.com/anncwb/vite-plugin-style-import/commit/75a89698698dff4714ec1db0c7471c8a67acec99))
+- path normalization ([#41](https://github.com/anncwb/vite-plugin-style-import/issues/41)) ([80451c1](https://github.com/anncwb/vite-plugin-style-import/commit/80451c1eda1ceee335d8aefaa828c853d7c9a1ea))
+
+### Features
+
+- refactoring plug-in, built-in resolve ([24cb92b](https://github.com/anncwb/vite-plugin-style-import/commit/24cb92bb41098c64abd3e63ab1b00be1e44009c4))
+- support pnpm ([935bbe5](https://github.com/anncwb/vite-plugin-style-import/commit/935bbe5b36eda0af8c4b6acba3dcd61c59a63261))
+
 # [1.3.0](https://github.com/anncwb/vite-plugin-style-import/compare/v1.0.1...v1.3.0) (2021-11-02)
 
 ### Bug Fixes
