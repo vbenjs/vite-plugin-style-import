@@ -4,9 +4,7 @@ import fs from 'fs'
 
 export function resolveNodeModules(libName: string, ...dir: string[]) {
   const modulePath = normalizePath(require.resolve(libName))
-
   const lastIndex = modulePath.lastIndexOf(libName)
-
   return normalizePath(path.resolve(modulePath.substring(0, lastIndex), ...dir))
 }
 
@@ -23,20 +21,6 @@ export const isPnp = !!process.versions.pnp
 export function isRegExp(value: unknown) {
   return Object.prototype.toString.call(value) === '[object RegExp]'
 }
-
-// export function judgeResultFun(arr1: readonly string[], arr2: string[]) {
-//   let flag = true;
-//   if (arr1.length !== arr2.length) {
-//     flag = false;
-//   } else {
-//     arr1.forEach((item) => {
-//       if (arr2.indexOf(item) === -1) {
-//         flag = false;
-//       }
-//     });
-//   }
-//   return flag;
-// }
 
 export function fileExists(f: string) {
   try {

@@ -61,7 +61,13 @@ import 'element-plus/lib/theme-chalk/el-button.css';
 
 ```ts
 import { UserConfigExport } from 'vite'
-import styleImport from 'vite-plugin-style-import'
+import styleImport, {
+  AndDesignVueResolve,
+  VantResolve,
+  ElementPlusResolve,
+  NutuiResolve,
+  AntdResolve,
+} from 'vite-plugin-style-import'
 
 export default (): UserConfigExport => {
   return {
@@ -76,7 +82,14 @@ export default (): UserConfigExport => {
     },
     plugins: [
       styleImport({
+        resolves:[
+          AndDesignVueResolve(),
+          VantResolve(),
+          ElementPlusResolve(),
+          NutuiResolve(),
+          AntdResolve(),]
         libs: [
+          // 如果没有你需要的resolve，可以在lib内直接写，也可以给我们提供PR
           {
             libraryName: 'ant-design-vue',
             esModule: true,
@@ -84,37 +97,6 @@ export default (): UserConfigExport => {
               return `ant-design-vue/es/${name}/style/index`
             },
           },
-          {
-            libraryName: 'antd',
-            esModule: true,
-            resolveStyle: (name) => {
-              return `antd/es/${name}/style/index`
-            },
-          },
-          {
-            libraryName: 'vant',
-            esModule: true,
-            resolveStyle: (name) => {
-              return `vant/es/${name}/style`
-            },
-          },
-          {
-            libraryName: 'element-plus',
-            base: 'element-plus/lib/theme-chalk/base.css',
-            resolveStyle: (name) => {
-              return `element-plus/lib/theme-chalk/${name}.css`
-            },
-            resolveComponent: (name) => {
-              return `element-plus/lib/${name}`
-            },
-          },
-          {
-            libraryName: '@nutui/nutui',
-            libraryNameChangeCase: 'pascalCase',
-            resolveStyle: (name) => {
-              return `@nutui/nutui/dist/packages/${name}/index.scss`
-            }
-          }
         ],
       }),
     ],
@@ -124,11 +106,12 @@ export default (): UserConfigExport => {
 
 ### 配置说明
 
-| 参数    | 类型                                                           | 默认值                                           | 说明                |
-| ------- | -------------------------------------------------------------- | ------------------------------------------------ | ------------------- |
-| include | `string 、 RegExp 、(string 、RegExp)[] 、null 、undefined`    | `['**/*.js', '**/*.ts', '**/*.tsx', '**/*.jsx']` | 包含的文件格式      |
-| exclude | `string 、RegExp 、 (string 、 RegExp)[] 、 null 、 undefined` | `'node_modules/**'`                              | 排除的的文件/文件夹 |
-| libs    | `Lib[]`                                                        | -                                                | 要导入的库列表      |
+| 参数     | 类型                                                           | 默认值                                           | 说明                        |
+| -------- | -------------------------------------------------------------- | ------------------------------------------------ | --------------------------- |
+| include  | `string 、 RegExp 、(string 、RegExp)[] 、null 、undefined`    | `['**/*.js', '**/*.ts', '**/*.tsx', '**/*.jsx']` | 包含的文件格式              |
+| exclude  | `string 、RegExp 、 (string 、 RegExp)[] 、 null 、 undefined` | `'node_modules/**'`                              | 排除的的文件/文件夹         |
+| libs     | `Lib[]`                                                        | -                                                | 要导入的库列表              |
+| resolves | `Lib[]`                                                        | -                                                | 要导入的库列表 (由插件内置) |
 
 **Lib**
 

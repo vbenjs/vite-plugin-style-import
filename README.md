@@ -61,12 +61,18 @@ import 'element-plus/lib/theme-chalk/el-button.css';
 
 ```ts
 import { UserConfigExport } from 'vite'
-import styleImport from 'vite-plugin-style-import'
+import styleImport, {
+  AndDesignVueResolve,
+  VantResolve,
+  ElementPlusResolve,
+  NutuiResolve,
+  AntdResolve,
+} from 'vite-plugin-style-import'
 
 export default (): UserConfigExport => {
   return {
-    // 1. If you are using the ant-design series, you need to configure this
-    // 2. Make sure less is installed in the dependency `yarn add less -D`
+    // 1. 如果使用的是ant-design 系列的 需要配置这个
+    // 2. 确保less安装在依赖 `yarn add less -D`
     css: {
       preprocessorOptions: {
         less: {
@@ -76,7 +82,14 @@ export default (): UserConfigExport => {
     },
     plugins: [
       styleImport({
+        resolves:[
+          AndDesignVueResolve(),
+          VantResolve(),
+          ElementPlusResolve(),
+          NutuiResolve(),
+          AntdResolve(),]
         libs: [
+          // If you don’t have the resolve you need, you can write it directly in the lib, or you can provide us with PR
           {
             libraryName: 'ant-design-vue',
             esModule: true,
@@ -84,37 +97,6 @@ export default (): UserConfigExport => {
               return `ant-design-vue/es/${name}/style/index`
             },
           },
-          {
-            libraryName: 'antd',
-            esModule: true,
-            resolveStyle: (name) => {
-              return `antd/es/${name}/style/index`
-            },
-          },
-          {
-            libraryName: 'vant',
-            esModule: true,
-            resolveStyle: (name) => {
-              return `vant/es/${name}/style`
-            },
-          },
-          {
-            libraryName: 'element-plus',
-            base: 'element-plus/lib/theme-chalk/base.css',
-            resolveStyle: (name) => {
-              return `element-plus/lib/theme-chalk/${name}.css`
-            },
-            resolveComponent: (name) => {
-              return `element-plus/lib/${name}`
-            },
-          },
-          {
-            libraryName: '@nutui/nutui',
-            libraryNameChangeCase: 'pascalCase',
-            resolveStyle: (name) => {
-              return `@nutui/nutui/dist/packages/${name}/index.scss`
-            }
-          }
         ],
       }),
     ],
@@ -124,11 +106,12 @@ export default (): UserConfigExport => {
 
 ### Options
 
-| param   | type                                                  | default                                          | description                                    |
-| ------- | ----------------------------------------------------- | ------------------------------------------------ | ---------------------------------------------- |
-| include | `string、RegExp、(string、RegExp)[]、null、undefined` | `['**/*.js', '**/*.ts', '**/*.tsx', '**/*.jsx']` | Code directory and file format to be converted |
-| exclude | `string、RegExp、(string、RegExp)[]、null、undefined` | `'node_modules/**'`                              | Excluded files/folders                         |
-| libs    | `Lib[]`                                               |                                                  | List of libraries to be imported               |
+| param    | type                                                  | default                                          | description                                               |
+| -------- | ----------------------------------------------------- | ------------------------------------------------ | --------------------------------------------------------- |
+| include  | `string、RegExp、(string、RegExp)[]、null、undefined` | `['**/*.js', '**/*.ts', '**/*.tsx', '**/*.jsx']` | Code directory and file format to be converted            |
+| exclude  | `string、RegExp、(string、RegExp)[]、null、undefined` | `'node_modules/**'`                              | Excluded files/folders                                    |
+| libs     | `Lib[]`                                               |                                                  | List of libraries to be imported                          |
+| resolves | `Lib[]`                                               |                                                  | List of libraries to be imported (built-in by the plugin) |
 
 **Lib**
 

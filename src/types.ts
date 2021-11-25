@@ -57,7 +57,8 @@ export interface VitePluginOptions {
    * @deprecated 1.2.0 is obsolete
    */
   root?: string
-  libs: Lib[]
+  libs?: Lib[]
+  resolves?: Lib[]
 }
 
 export interface Source {

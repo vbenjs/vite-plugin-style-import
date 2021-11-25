@@ -18,14 +18,15 @@ const asRE = /\s+as\s+\w+,?/g
 const isFn = (value: any): value is (...args: any[]) => any =>
   value != null && Object.prototype.toString.call(value) === '[object Function]'
 
-export * from './types'
-
 export default (options: VitePluginOptions): Plugin => {
   const {
     include = ['**/*.vue', '**/*.ts', '**/*.js', '**/*.tsx', '**/*.jsx'],
     exclude = 'node_modules/**',
-    libs = [],
+    resolves = [],
   } = options
+
+  let { libs = [] } = options
+  libs = [...libs, ...resolves]
 
   const filter = createFilter(include, exclude)
 
@@ -351,3 +352,7 @@ function needTransform(code: string, libs: Lib[]) {
     return !new RegExp(`('${libraryName}')|("${libraryName}")`).test(code)
   })
 }
+
+export * from './types'
+
+export * from './resolve'
