@@ -1527,6 +1527,11 @@ vue@^3.2.22:
     "@vue/server-renderer" "3.2.22"
     "@vue/shared" "3.2.22"
 
+vxe-table@^4.1.17-beta.0:
+  version "4.1.17-beta.0"
+  resolved "https://registry.npmmirror.com/vxe-table/download/vxe-table-4.1.17-beta.0.tgz#c3de430d4bab3fe990c34051d9f0ddb80d4ea568"
+  integrity sha512-dW/zWS8XmxI2kTONAwViq3gNkzTdB2iUpWUtP252Q6kCCdNLWLBey4/xOrMgliIOTLWZIvo/7eVpCEY+LU/C0g==
+
 warning@^4.0.0:
   version "4.0.3"
   resolved "https://registry.npmjs.org/warning/-/warning-4.0.3.tgz#16e9e077eb8a86d6af7d64aa1e05fd85b4678ca3"
@@ -1540,3 +1545,8 @@ which@^2.0.1:
   integrity sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==
   dependencies:
     isexe "^2.0.0"
+
+xe-utils@3:
+  version "3.4.3"
+  resolved "https://registry.npmmirror.com/xe-utils/download/xe-utils-3.4.3.tgz#6006fed5287e976573c6c34fa4b4c8ff467a7933"
+  integrity sha512-x7tGog6B4EgOSKV5PGTG4I3r1s+do3ZPAQliV6HWcBC5hCDPr27jiphuRUNVhGXNjG1vZ/Rj/DTnvUw9stTHUQ==
