@@ -1,6 +1,8 @@
 import path from 'path'
 import { normalizePath } from 'vite'
 import fs from 'fs'
+import { createRequire } from 'module'
+const require = createRequire(import.meta.url)
 
 export function resolveNodeModules(libName: string, ...dir: string[]) {
   const modulePath = normalizePath(require.resolve(libName))
