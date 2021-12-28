@@ -17,6 +17,10 @@
     <ElButton>el-button</ElButton>
 
     <Button>vant btn</Button>
+    <hr/>
+
+    <Table />
+
   </div>
 </template>
 
@@ -29,9 +33,10 @@
   import { Affix, Cascader } from 'ant-design-vue';
   import { Button } from 'vant';
   import { ElButton } from 'element-plus';
+  import Table from './VxeTable'
   export default defineComponent({
     name: 'App',
-    components: { TestTsx, ElButton, ElLink, TestJsx, ElAlert, Affix, Cascader, Button },
+    components: { TestTsx, ElButton, ElLink, TestJsx, ElAlert, Affix, Cascader, Button, Table },
     setup() {
       return {};
     },
