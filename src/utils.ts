@@ -2,10 +2,15 @@ import path from 'path'
 import { normalizePath } from 'vite'
 import fs from 'fs'
 import { createRequire } from 'module'
-const require = createRequire(import.meta.url)
 
 export function resolveNodeModules(libName: string, ...dir: string[]) {
-  const modulePath = normalizePath(require.resolve(libName))
+  const esRequire = createRequire(import.meta.url)
+  let modulePath = ''
+  try {
+    modulePath = normalizePath(esRequire.resolve(libName))
+  } catch (error) {
+    modulePath = normalizePath(require.resolve(libName))
+  }
   const lastIndex = modulePath.lastIndexOf(libName)
   return normalizePath(path.resolve(modulePath.substring(0, lastIndex), ...dir))
 }
