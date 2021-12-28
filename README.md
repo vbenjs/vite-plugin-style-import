@@ -87,7 +87,7 @@ export default (): UserConfigExport => {
           VantResolve(),
           ElementPlusResolve(),
           NutuiResolve(),
-          AntdResolve(),]
+          AntdResolve(),],
         libs: [
           // If you don’t have the resolve you need, you can write it directly in the lib, or you can provide us with PR
           {
