@@ -5,15 +5,14 @@
   "license": "MIT",
   "author": "Vben",
   "scripts": {
-    "dev": "npm run build -- --watch",
-    "build": "tsup src/index.ts --dts --format cjs,esm",
-    "prepublishOnly": "yarn build",
-    "log": "conventional-changelog -p angular -i CHANGELOG.md -s ",
-    "lint:lint-staged": "lint-staged -c ./.husky/lintstagedrc.js",
-    "lint:eslint": "eslint \"src/**/*.{ts,tsx}\" --fix",
-    "test": "jest --coverage",
-    "test:watch": "jest --watch",
-    "prepare": "husky install"
+    "stub": "pnpm run prepack --filter ./packages -- --stub",
+    "postinstall": "pnpm run stub",
+    "log": "conventional-changelog -p angular -i CHANGELOG.md -s",
+    "lint:pretty": "pretty-quick --staged",
+    "lint:eslint": "eslint \"packages/**/*.{ts,tsx}\" --fix",
+    "prepare": "husky install",
+    "preinstall": "npx only-allow pnpm",
+    "test": "vitest"
   },
   "repository": {
     "type": "git",
