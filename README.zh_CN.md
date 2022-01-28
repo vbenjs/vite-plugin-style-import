@@ -61,7 +61,8 @@ import 'element-plus/lib/theme-chalk/el-button.css';
 
 ```ts
 import { UserConfigExport } from 'vite'
-import styleImport, {
+import {
+  createStyleImportPlugin,
   AndDesignVueResolve,
   VantResolve,
   ElementPlusResolve,
@@ -81,7 +82,7 @@ export default (): UserConfigExport => {
       },
     },
     plugins: [
-      styleImport({
+      createStyleImportPlugin({
         resolves:[
           AndDesignVueResolve(),
           VantResolve(),

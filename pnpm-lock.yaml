@@ -103,13 +103,34 @@ importers:
       vite: 2.7.13_less@4.1.2
       vite-plugin-style-import: link:../../core
 
-  packages/playground/yarn-pnp:
+  packages/playground/yarn:
     specifiers:
-      prettier: ^2.5.1
+      '@types/rollup': ^0.54.0
+      '@vitejs/plugin-vue': ^2.1.0
+      '@vitejs/plugin-vue-jsx': ^1.3.3
+      '@vue/compiler-sfc': ^3.2.29
+      ant-design-vue: ^2.2.8
+      cross-env: ^7.0.3
+      element-plus: ^1.2.0-beta.6
+      less: ^4.1.2
       typescript: ^4.5.5
+      vant: ^3.4.3
+      vite: ^2.7.13
+      vue: ^3.2.29
+    dependencies:
+      ant-design-vue: 2.2.8_7b9c5f8a4a835fb1fc33e1e095e7e31c
+      element-plus: 1.2.0-beta.6_vue@3.2.29
+      vant: 3.4.3_vue@3.2.29
+      vue: 3.2.29
     devDependencies:
-      prettier: 2.5.1
+      '@types/rollup': 0.54.0
+      '@vitejs/plugin-vue': 2.1.0_vite@2.7.13+vue@3.2.29
+      '@vitejs/plugin-vue-jsx': 1.3.3
+      '@vue/compiler-sfc': 3.2.29
+      cross-env: 7.0.3
+      less: 4.1.2
       typescript: 4.5.5
+      vite: 2.7.13_less@4.1.2
 
 packages:
   /@ant-design/colors/5.1.1:
