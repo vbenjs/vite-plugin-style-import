@@ -1,3 +1,17 @@
+# [2.0.0](https://github.com/anncwb/vite-plugin-style-import/compare/v1.4.0...v2.0.0) (2022-01-29)
+
+### Bug Fixes
+
+- added support for running from an es module ([#62](https://github.com/anncwb/vite-plugin-style-import/issues/62)) ([52db3bd](https://github.com/anncwb/vite-plugin-style-import/commit/52db3bd56023365f28b26d05479adc6c0fd71f58))
+
+### Features
+
+- add vxe-table resolve ([#57](https://github.com/anncwb/vite-plugin-style-import/issues/57)) ([4386c3a](https://github.com/anncwb/vite-plugin-style-import/commit/4386c3a3d50cec3df9163330f4b47901e5764b34))
+
+### Performance Improvements
+
+- remove resolveComponent and transformComponentImportName ([62e52d8](https://github.com/anncwb/vite-plugin-style-import/commit/62e52d846028be1da2e8d4323f49ea578034c09c))
+
 ## [1.4.1](https://github.com/anncwb/vite-plugin-style-import/compare/v1.4.0...v1.4.1) (2021-12-28)
 
 ### Bug Fixes
