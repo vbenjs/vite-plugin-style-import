@@ -3,3 +3,4 @@ packages:
   - packages/playground/*
   - '!packages/playground/yarn-pnp/*'
   - '!packages/playground/yarn/*'
+  - '!packages/playground/cnpm/*'
