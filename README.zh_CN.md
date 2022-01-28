@@ -142,17 +142,6 @@ export default (): UserConfigExport => {
    * default: false
    */
   ensureStyleFile?: boolean;
-
-   // https://github.com/anncwb/vite-plugin-style-import/pull/5
-  // 用于一些可能需要按需引入组件的情况,不单单只是引入样式(对Esm不能很好支持的库)
-  // 仅在生产环境工作
-  resolveComponent?: (name: string) => string;
-
-  // https://github.com/anncwb/vite-plugin-style-import/issues/12
-  // `import ${libName} from 'xxxx';`
-  // Used for custom import name
-  // 仅在生产环境工作
-  transformComponentImportName?: (name: string) => string;
 }
 
 // LibraryNameChangeCase
@@ -180,13 +169,10 @@ export type ChangeCaseType =
 **运行示例**
 
 ```bash
-
-cd ./example
-
-yarn install
-
-yarn serve
-
+pnpm install
+cd packages/playground/basic
+pnpm run dev
+pnpm run build
 ```
 
 ## 示例项目

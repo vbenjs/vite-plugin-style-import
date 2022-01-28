@@ -1,35 +1,33 @@
 import type { Plugin } from 'vite'
 import type { ExternalOption } from 'rollup'
+import type { ImportSpecifier } from 'es-module-lexer'
 import type {
   ChangeCaseType,
   VitePluginOptions,
   LibraryNameChangeCase,
   Lib,
-} from './types'
+} from './typing'
 import { createFilter } from '@rollup/pluginutils'
 import * as changeCase from 'change-case'
-import { init, parse, ImportSpecifier } from 'es-module-lexer'
+import { init, parse } from 'es-module-lexer'
 import MagicString from 'magic-string'
-import path from 'path'
-import fs from 'fs'
-import Debug from 'debug'
+import path from 'pathe'
+import consola from 'consola'
 import {
   fileExists,
+  isFunction,
   isPnp,
   isRegExp,
   resolveNodeModules,
   resolvePnp,
 } from './utils'
 
-const debug = Debug('vite-plugin-style-import')
-
 const ensureFileExts: string[] = ['.css', '.js', '.scss', '.less', '.styl']
-
 const asRE = /\s+as\s+\w+,?/g
-const isFn = (value: any): value is (...args: any[]) => any =>
-  value != null && Object.prototype.toString.call(value) === '[object Function]'
 
-export default (options: VitePluginOptions): Plugin => {
+consola.wrapConsole()
+
+export function createStyleImportPlugin(options: VitePluginOptions): Plugin {
   const {
     include = ['**/*.vue', '**/*.ts', '**/*.js', '**/*.tsx', '**/*.jsx'],
     exclude = 'node_modules/**',
@@ -42,20 +40,14 @@ export default (options: VitePluginOptions): Plugin => {
   const filter = createFilter(include, exclude)
 
   let needSourcemap = false
-  let isBuild = false
   let external: ExternalOption | undefined
-
-  debug('plugin options:', options)
 
   return {
     name: 'vite:style-import',
     enforce: 'post',
     configResolved(resolvedConfig) {
       needSourcemap = !!resolvedConfig.build.sourcemap
-      isBuild =
-        resolvedConfig.isProduction || resolvedConfig.command === 'build'
       external = resolvedConfig?.build?.rollupOptions?.external ?? undefined
-      debug('plugin config:', resolvedConfig)
     },
     async transform(code, id) {
       if (!code || !filter(id) || !needTransform(code, libs)) {
@@ -67,9 +59,8 @@ export default (options: VitePluginOptions): Plugin => {
       let imports: readonly ImportSpecifier[] = []
       try {
         imports = parse(code)[0]
-        debug('imports:', imports)
       } catch (e) {
-        debug('imports-error:', e)
+        consola.error(e)
       }
       if (!imports.length) {
         return null
@@ -85,8 +76,6 @@ export default (options: VitePluginOptions): Plugin => {
         const lib = getLib(n, libs, external)
         if (!lib) continue
 
-        const isResolveComponent = isBuild && !!lib.resolveComponent
-
         const importStr = code.slice(ss, se)
 
         let importVariables = transformImportVar(importStr)
@@ -98,20 +87,7 @@ export default (options: VitePluginOptions): Plugin => {
           importVariables,
         )
 
-        let compStrList: string[] = []
-        let compNameList: string[] = []
-
-        if (isResolveComponent) {
-          const { componentStrList, componentNameList } = transformComponent(
-            lib,
-            importVariables,
-          )
-          compStrList = componentStrList
-          compNameList = componentNameList
-        }
-
-        debug('prepend import css str:', importCssStrList.join(''))
-        debug('prepend import component str:', compStrList.join(''))
+        const compStrList: string[] = []
 
         const { base = '' } = lib
 
@@ -123,39 +99,6 @@ export default (options: VitePluginOptions): Plugin => {
 
         // TODO There may be boundary conditions. There is no semicolon ending in the code and the code is connected to one period. But such code should be very bad
         const endIndex = se + 1
-        // if (isBuild) {
-
-        // } else {
-        //   str().append(`\n${compStrList.join('')}${importCssStrList.join('')}`);
-        // }
-
-        if (
-          isResolveComponent &&
-          compNameList.some((item) => importVariables.includes(item))
-        ) {
-          // TODO  Special treatment element plus
-          if (lib.libraryName === 'element-plus') {
-            str().remove(ss, endIndex)
-          } else {
-            const importStr = str().slice(ss, endIndex)
-            const [resultStr, uncssList] = await removeAlreadyName(
-              importStr,
-              lib,
-            )
-            if (resultStr) {
-              str().overwrite(ss, endIndex, resultStr)
-            } else {
-              str().remove(ss, endIndex)
-            }
-
-            if (uncssList.length) {
-              compStrList = compStrList.filter(
-                (item) =>
-                  !uncssList.some((imp) => item.startsWith(`import ${imp}`)),
-              )
-            }
-          }
-        }
 
         str().prependRight(
           endIndex,
@@ -164,7 +107,6 @@ export default (options: VitePluginOptions): Plugin => {
           )}`,
         )
       }
-
       return {
         map: needSourcemap ? str().generateMap({ hires: true }) : null,
         code: str().toString(),
@@ -180,46 +122,6 @@ function filterImportVariables(importVars: readonly string[], reg?: RegExp) {
   return importVars.filter((item) => reg.test(item))
 }
 
-async function removeAlreadyName(
-  importStr: string,
-  lib: Lib,
-): Promise<[string, string[]]> {
-  let result = importStr
-  const { libraryNameChangeCase = 'paramCase', resolveStyle, libraryName } = lib
-  const exportStr = importStr
-    .replace(asRE, ',')
-    .replace('import', 'export')
-    .replace(asRE, ',')
-  await init
-  const importComponents = parse(exportStr)[1]
-
-  const hasCssList: string[] = []
-  const unCssList: string[] = []
-  importComponents.filter((comp) => {
-    const name = getChangeCaseFileName(comp, libraryNameChangeCase)
-    const importStr = resolveStyle?.(name)
-    if (importStr) {
-      const cssFile = resolveNodeModules(libraryName, importStr!)
-      if (fs.existsSync(cssFile)) {
-        hasCssList.push(comp)
-      } else {
-        unCssList.push(comp)
-      }
-    } else {
-      unCssList.push(comp)
-    }
-  })
-
-  hasCssList.forEach((item) => {
-    result = result.replace(new RegExp(`\\s?${item}\\s?,?`), '')
-  })
-
-  if (parse(result.replace('import', 'export'))[1].length === 0) {
-    result = ''
-  }
-  return [result, unCssList]
-}
-
 // Generate the corresponding component css string array
 async function transformComponentCss(
   lib: Lib,
@@ -233,7 +135,7 @@ async function transformComponentCss(
     ensureStyleFile = false,
   } = lib
 
-  if (!isFn(resolveStyle) || !libraryName) {
+  if (!isFunction(resolveStyle) || !libraryName) {
     return []
   }
   const set = new Set<string>()
@@ -267,50 +169,7 @@ async function transformComponentCss(
     isAdd && set.add(`import '${importStr}';\n`)
   }
 
-  debug('import css sets:', set.toString())
   return Array.from(set)
-}
-
-// Generate the corresponding component  string array
-function transformComponent(lib: Lib, importVariables: readonly string[]) {
-  const {
-    libraryName,
-    resolveComponent,
-    libraryNameChangeCase = 'paramCase',
-    transformComponentImportName,
-  } = lib
-  if (!isFn(resolveComponent) || !libraryName) {
-    return {
-      componentStrList: [],
-      componentNameList: [],
-    }
-  }
-
-  const componentNameSet = new Set<string>()
-  const componentStrSet = new Set<string>()
-
-  for (let index = 0; index < importVariables.length; index++) {
-    const libName = importVariables[index]
-
-    const name = getChangeCaseFileName(
-      importVariables[index],
-      libraryNameChangeCase,
-    )
-    const importStr = resolveComponent(name)
-
-    const importLibName =
-      (isFn(transformComponentImportName) &&
-        transformComponentImportName(libName)) ||
-      libName
-
-    componentStrSet.add(`import ${importLibName} from '${importStr}';\n`)
-    componentNameSet.add(libName)
-  }
-  debug('import component set:', componentStrSet.toString())
-  return {
-    componentStrList: Array.from(componentStrSet),
-    componentNameList: Array.from(componentNameSet),
-  }
 }
 
 // Extract import variables
@@ -323,9 +182,8 @@ export function transformImportVar(importStr: string) {
   let importVariables: readonly string[] = []
   try {
     importVariables = parse(exportStr)[1]
-    debug('importVariables:', importVariables)
   } catch (error) {
-    debug('transformImportVar:', error)
+    consola.error(error)
   }
   return importVariables
 }
@@ -407,6 +265,5 @@ function needTransform(code: string, libs: Lib[]) {
   })
 }
 
-export * from './types'
-
+export * from './typing'
 export * from './resolve'

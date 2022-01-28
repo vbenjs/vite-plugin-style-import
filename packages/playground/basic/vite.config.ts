@@ -1,11 +1,12 @@
 import { UserConfigExport } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import jsx from '@vitejs/plugin-vue-jsx'
-import styleImport, {
+import {
+  createStyleImportPlugin,
   AndDesignVueResolve,
   VantResolve,
   ElementPlusResolve,
-} from '../../dist/index'
+} from 'vite-plugin-style-import'
 
 export default (): UserConfigExport => {
   return {
@@ -20,8 +21,8 @@ export default (): UserConfigExport => {
     plugins: [
       vue(),
       jsx(),
-      styleImport({
-        resolves: [AndDesignVueResolve(), VantResolve(), ElementPlusResolve()],
+      createStyleImportPlugin({
+        resolves: [AndDesignVueResolve(), ElementPlusResolve(), VantResolve()],
       }),
     ],
   }

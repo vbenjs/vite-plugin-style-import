@@ -82,12 +82,13 @@ export default (): UserConfigExport => {
     },
     plugins: [
       styleImport({
-        resolves:[
+        resolves: [
           AndDesignVueResolve(),
           VantResolve(),
           ElementPlusResolve(),
           NutuiResolve(),
-          AntdResolve(),],
+          AntdResolve(),
+        ],
         libs: [
           // If you don’t have the resolve you need, you can write it directly in the lib, or you can provide us with PR
           {
@@ -142,16 +143,7 @@ export default (): UserConfigExport => {
    */
   ensureStyleFile?: boolean;
 
-  // https://github.com/anncwb/vite-plugin-style-import/pull/5
-  // Used in some situations where components may need to be introduced on demand, not just to introduce styles.(Libraries that don't support Esm well)
-  // Only work in production
-  resolveComponent?: (name: string) => string;
 
-  // https://github.com/anncwb/vite-plugin-style-import/issues/12
-  // `import ${libName} from 'xxxx';`
-  // Used for custom import name
-  // Only work in production
-  transformComponentImportName?: (name: string) => string;
 }
 
 // LibraryNameChangeCase
@@ -179,13 +171,10 @@ export type ChangeCaseType =
 **Run Example**
 
 ```bash
-
-cd ./example
-
-yarn install
-
-yarn serve
-
+pnpm install
+cd packages/playground/basic
+pnpm run dev
+pnpm run build
 ```
 
 ## Sample project

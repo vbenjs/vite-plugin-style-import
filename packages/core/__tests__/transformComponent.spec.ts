@@ -1,12 +1,12 @@
-import vitePluginComponentImport from '../src'
-import { Lib } from '../src/types'
+import { createStyleImportPlugin } from '../src'
+import { Lib } from '../src/typing'
 import { test, expect } from 'vitest'
 
 const transformCodeTemplate = `import { libName } from 'lib';
 import { libName2 } from 'lib2';`
 
 const createVitePluginComponentImport = (libs: Lib[]) => {
-  const { configResolved, transform } = vitePluginComponentImport({
+  const { configResolved, transform } = createStyleImportPlugin({
     libs,
   })
 

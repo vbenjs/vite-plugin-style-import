@@ -1,6 +1,6 @@
-import path from 'path'
+import path from 'pathe'
 import { normalizePath } from 'vite'
-import fs from 'fs'
+import fs from 'fs-extra'
 import { createRequire } from 'module'
 
 export function resolveNodeModules(libName: string, ...dir: string[]) {
@@ -36,4 +36,11 @@ export function fileExists(f: string) {
   } catch (error) {
     return false
   }
+}
+
+export function isFunction(value: any): value is (...args: any[]) => any {
+  return (
+    value != null &&
+    Object.prototype.toString.call(value) === '[object Function]'
+  )
 }

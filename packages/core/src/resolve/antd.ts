@@ -1,4 +1,4 @@
-import type { Lib } from '../types'
+import type { Lib } from '../typing'
 
 export function AntdResolve(): Lib {
   return {
