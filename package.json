@@ -16,12 +16,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/anncwb/vite-plugin-style-import"
+    "url": "https://github.com/vbenjs/vite-plugin-style-import"
   },
   "bugs": {
-    "url": "https://github.com/anncwb/vite-plugin-style-import/issues"
+    "url": "https://github.com/vbenjs/vite-plugin-style-import/issues"
   },
-  "homepage": "https://github.com/anncwb/vite-plugin-style-import/tree/master/#readme",
+  "homepage": "https://github.com/vbenjs/vite-plugin-style-import/tree/main/#readme",
   "devDependencies": {
     "@commitlint/cli": "^16.1.0",
     "@commitlint/config-conventional": "^16.0.0",
