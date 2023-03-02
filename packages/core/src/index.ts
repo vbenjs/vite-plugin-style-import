@@ -30,7 +30,7 @@ consola.wrapConsole()
 export function createStyleImportPlugin(options: VitePluginOptions): Plugin {
   const {
     include = ['**/*.vue', '**/*.ts', '**/*.js', '**/*.tsx', '**/*.jsx'],
-    exclude = 'node_modules/**',
+    exclude = '**/node_modules/**',
     resolves = [],
   } = options
 
